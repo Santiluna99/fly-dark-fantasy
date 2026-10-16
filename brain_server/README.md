@@ -7,9 +7,8 @@ por TCP local (puerto 9009). Godot le manda lo que siente la mosca y recibe giro
 1. `pip install -r requirements.txt` (Python 3.10+; usa numba, así que la primera ejecución tarda unos segundos más)
 2. `sh descargar_datos.sh` (o `descargar_datos.bat` en Windows): baja ~370 MB de GitHub a la carpeta `datos/` (una sola vez)
 3. `sh iniciar.sh` (o `iniciar.bat`). Verás `Cerebro listo: 138639 neuronas...`
-4. Abre el proyecto Godot (`nocturnia/`) y pulsa **B** para cambiar entre cerebro local (80 neuronas) y real.
-   También puedes arrancar con el real: `godot --path . -- --real-brain`. El HUD muestra "Cerebro (B): REAL, 138.639 neuronas".
-   Si el servidor no está, el juego usa el cerebro local sin errores y reintenta conectar cada 3 s.
+4. Abre el proyecto Godot (`game/`) y pulsa F5. Es el **único cerebro** de la mosca: el HUD muestra "Cerebro: REAL, 138.639 neuronas".
+   Si el servidor no está, la mosca espera quieta (HUD: "SIN SERVIDOR") y el juego reintenta conectar cada 3 s. La primera respuesta puede tardar unos segundos.
 
 ## Qué hace cada parte
 - `fly_sim.py` — simulador LIF (parámetros de Shiu et al. 2023) con estado persistente y bucle compilado (numba); paso de 0,5 ms.

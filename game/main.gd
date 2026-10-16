@@ -48,7 +48,6 @@ var free_pitch := -0.3
 # Registro de eventos (los últimos 6) que se muestra abajo a la izquierda; hud = texto superior.
 var logs: Array[String] = []
 var hud: Label
-var nv_pending_real := false
 var nv: NeuroView   # panel de actividad neuronal (se reasigna al cambiar de cerebro)
 var logl: Label
 # speed_i = índice de velocidad del juego (x1, x3, x8);  fire_lights = luces de fuego que parpadean.
@@ -120,8 +119,6 @@ func _ready() -> void:
 	# Aparecen mobs, frutas y la mosca; luego se crea la interfaz.
 	_population()
 	_ui()
-	if nv_pending_real:
-		nv.brain = fly.set_real_brain(true)   # arrancó con --real-brain
 	log_msg("La lluvia cae sobre Nocturnia...")
 
 
@@ -1024,8 +1021,6 @@ func _population() -> void:
 	add_child(fly)
 	fly.position = Vector3(0, 6, 34)
 	foc = fly
-	if "--real-brain" in OS.get_cmdline_user_args():
-		nv_pending_real = true
 
 
 # ---------- interfaz y cámaras ----------
@@ -1147,7 +1142,6 @@ func _input(e: InputEvent) -> void:
 			KEY_Y: dn.auto = not dn.auto
 			KEY_R: dn.rain_auto = false; dn.rain_on = not dn.rain_on
 			KEY_M: _toggle_map()
-			KEY_B: nv.brain = fly.set_real_brain(not fly.use_real)   # alterna cerebro local / cerebro real
 	elif e is InputEventMouseButton and e.pressed and mode == 2 and not map_layer.visible:
 		if e.button_index == MOUSE_BUTTON_WHEEL_UP: free_speed = minf(free_speed * 1.2, 400.0)
 		elif e.button_index == MOUSE_BUTTON_WHEEL_DOWN: free_speed = maxf(free_speed / 1.2, 3.0)
@@ -1220,7 +1214,7 @@ func _process(dt: float) -> void:
 		cam.global_position.y = gy
 	rain.global_position = cam.global_position + Vector3(0, 14, 0)
 	var who := "Mosca" if foc == fly else "%s (%s)" % [(foc as Mob).mob_name, Mob.FNAME[(foc as Mob).faction]]
-	hud.text = "%s · %s\nMosca: gen %d · energía %d · frutas %d · %s\nCerebro (B): %s\n%s %s%s%s" % [
+	hud.text = "%s · %s\nMosca: gen %d · energía %d · frutas %d · %s\nCerebro: %s\n%s %s%s%s" % [
 		MODES[mode], who, fly.gen, int(fly.energy), fly.eaten, biome_name(fly.global_position),
-		fly.real_brain.status if fly.use_real else "local, 80 neuronas",
+		fly.real_brain.status,
 		dn.clock(), dn.preset_name(), " (auto)" if dn.auto else "", ("  · cámara libre %d m/s" % int(free_speed)) if mode == 2 else ""] + ("  · %d FPS" % Engine.get_frames_per_second() if show_fps else "")

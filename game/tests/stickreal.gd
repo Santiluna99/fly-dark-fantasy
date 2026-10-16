@@ -13,10 +13,10 @@ func _ready() -> void:
 	main = (load("res://main.tscn") as PackedScene).instantiate()
 	add_child(main)
 	Engine.time_scale = 1.0
+	main.fly.real_brain.start(9009)
 	var pt := int(OS.get_cmdline_user_args()[2])
 	main.fly.persist_learning = false
 	main.fly.learn_enabled = (OS.get_cmdline_user_args()[1] == "1")
-	main.nv.brain = main.fly.set_real_brain(true)
 	main.fly.real_brain.start(pt)
 func _physics_process(dt: float) -> void:
 	t += dt

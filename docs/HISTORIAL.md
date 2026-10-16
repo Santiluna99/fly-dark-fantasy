@@ -39,7 +39,7 @@ Todo lo que se hizo en el proyecto, en orden aproximado, con el porqué de cada 
 
 - **Dolor al chocar con paredes:** activa la amenaza del lado golpeado, deja una memoria del lugar y provoca un rebote suave.
 - **Retroceso por contacto sostenido:** una primera versión solo con dolor empeoró algunos casos (una semilla quedó 70 s pegada). Si pasan 0,5 s seguidos en contacto, la mosca retrocede, sube y gira hacia afuera.
-- **Aprendizaje de miedo a las paredes** con bigotes (3 rayos) y condicionamiento clásico, persistente entre vidas y sesiones. Funciona con los dos cerebros porque actúa en las entradas.
+- **Aprendizaje de miedo a las paredes** con bigotes (3 rayos) y condicionamiento clásico, persistente entre vidas y sesiones. Actúa en las entradas del cerebro, no dentro de él.
 - **Desde aquí todas las pruebas de comportamiento se hacen con el cerebro real y a tiempo real.**
 
 ## Fase 6: ajustes de octubre
@@ -51,6 +51,14 @@ Todo lo que se hizo en el proyecto, en orden aproximado, con el porqué de cada 
 - **El olor ya no atraviesa muros:** una fruta tapada llega con el 15 % de fuerza (rayo mosca → fruta), lo que reduce el tiempo que pasa empujando contra una pared.
 - **Los mobs lejanos ya no atraviesan muros:** error introducido por la optimización anterior, corregido con rayos antes de cada paso.
 - **Sesgo a la izquierda:** medido (85–87 % del giro) y corregido con el espejo periódico del cerebro real y dos sesgos de código (borde del mapa, choque de frente).
+
+## Fase 7: solo cerebro real
+
+- **Se eliminó el cerebro local de 80 neuronas** (red LIF con aprendizaje por dopamina) del juego y del repositorio. Ahora el único cerebro es el conectoma de FlyWire, a través de `brain_server/`.
+- `fly_brain.gd` pasó de ser la red neuronal a una interfaz mínima (80 grupos, `rate[]`, `step`, `reset`, colores del panel). `remote_brain.gd` ya no tiene fallback local; se quitaron la tecla **B**, el argumento `--real-brain`, `punish()`/`reward()` y la dopamina.
+- **Sin servidor la mosca espera quieta** (sin hambre ni edad) y el HUD indica `SIN SERVIDOR`; se reintenta conectar cada 3 s. Tras conectar, la primera respuesta puede tardar unos segundos.
+- Se perdió el aprendizaje por dopamina del cerebro local; queda el miedo aprendido a las paredes, que actúa en las entradas.
+- Comprobación con el cerebro real tras el cambio: vuelo libre 180 s, 2 semillas, contacto con paredes 2,9 % y 3,4 %, y 5 y 2 frutas comidas.
 
 ## Ideas pendientes
 

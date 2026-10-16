@@ -1,3 +1,5 @@
+> **Nota:** documento histórico. Menciona el cerebro local de 80 neuronas y la tecla **B**, que ya se eliminaron: el único cerebro es el conectoma real (ver [`CEREBRO.md`](CEREBRO.md)).
+
 # Nocturnia (Godot 4.3+)
 
 Abre la carpeta con Godot 4.3 o superior y pulsa F5. No hay assets: todo se genera por código.

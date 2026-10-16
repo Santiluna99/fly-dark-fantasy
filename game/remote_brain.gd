@@ -2,7 +2,7 @@ class_name RemoteBrain extends FlyBrain
 ## CEREBRO REAL (conectoma FlyWire, 138.639 neuronas) a través de un servidor Python local.
 ## Hereda de FlyBrain para que Fly.gd y NeuroView lo usen igual que al cerebro de 80 neuronas.
 ## Cada ~50 ms envía los sentidos (olor izq/der, amenaza izq/der, hambre) y recibe giro, avance y actividad.
-## Si el servidor no está disponible, usa el cerebro local de 80 neuronas (así el juego nunca se queda sin cerebro).
+## Si el servidor no está disponible la mosca se queda quieta esperando (live = false) y se reintenta la conexión cada 3 s.
 ## Servidor: carpeta "cerebro_real/" -> python fly_server.py
 
 const SEND_MS := 50          # intervalo de envío de sentidos
@@ -48,8 +48,8 @@ func step(x: PackedFloat32Array) -> void:
 		if st == StreamPeerTCP.STATUS_ERROR or st == StreamPeerTCP.STATUS_NONE:
 			if Time.get_ticks_msec() > _retry:
 				start(port)
-		status = "local, 80 neuronas (sin servidor)"
-		super.step(x)
+		status = "SIN SERVIDOR: ejecuta brain_server (python fly_server.py)"
+		rate.fill(0.0)
 		return
 	var now := Time.get_ticks_msec()
 	if now - _sent >= SEND_MS:
@@ -77,7 +77,8 @@ func step(x: PackedFloat32Array) -> void:
 	_read()
 	if _tgt.is_empty():
 		status = "esperando al servidor…"
-		super.step(x)
+		live = false
+		rate.fill(0.0)
 		return
 	live = true
 	status = "REAL, 138.639 neuronas (t=%.1f s)" % (t_ms / 1000.0)
@@ -131,12 +132,3 @@ func _read() -> void:
 func reset() -> void:
 	super.reset()
 	_reset = true
-
-
-## El conectoma real no cambia sus pesos (no hay dopamina/aprendizaje en este modo).
-func reward() -> void:
-	pass
-
-
-func punish() -> void:
-	pass

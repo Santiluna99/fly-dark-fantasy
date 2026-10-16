@@ -6,8 +6,8 @@ Todo el juego se construye **por código**: `main.tscn` solo tiene un nodo raíz
 game/
 ├── main.gd            Mundo: terreno, biomas, castillo, aldeas, cascadas, faro, población, cámara, HUD, entrada
 ├── fly.gd             La mosca: sentidos, dolor/aprendizaje, movimiento con física, hambre
-├── fly_brain.gd       Cerebro local: red LIF de 80 neuronas con dopamina
-├── remote_brain.gd    Cerebro real: cliente TCP que hereda de FlyBrain (con espejo izquierda/derecha)
+├── fly_brain.gd       Interfaz común del cerebro (80 grupos, `rate[]`, colores del panel)
+├── remote_brain.gd    Cerebro: cliente TCP del servidor del conectoma (con espejo izquierda/derecha)
 ├── neuro_view.gd      Panel de actividad (80 cuadraditos)
 ├── mob.gd             IA de los mobs: facciones, combate, comercio, LOD, ahogamiento y reaparición
 ├── mob_model.gd       Modelos de mobs (primitivas o .glb con animaciones)
@@ -47,7 +47,7 @@ game/
 `CharacterBody3D` que vuela. Cada tick de física: sentir → pensar → moverse → comer.
 
 1. **Sentidos:** olor en dos antenas separadas 1,6 m (concentración sumada de todas las frutas, atenuada si hay un muro entre medias), amenaza (mobs y proyectiles hasta 8 m, a izquierda/derecha), hambre, bigotes (3 rayos de 9 m) y memoria de choques.
-2. **Cerebro:** `brain.step(x)` con el vector de entradas; local o real (ver [CEREBRO](CEREBRO.md)).
+2. **Cerebro:** `brain.step(x)` con el vector de entradas; el conectoma real vía servidor (ver [CEREBRO](CEREBRO.md)). Sin servidor, la mosca espera quieta.
 3. **Movimiento:** giro por diferencia entre neuronas motoras, rebote suave tras un choque, retroceso si queda pegada a una pared, altura sobre el terreno, `move_and_slide`.
 4. **Comer y morir:** come a < 1,5 m de una fruta (+35 de energía); muere por hambre (`HUNGER_RATE = 0.45`, ~220 s), por un manotazo de un mob o por un hechizo; renace conservando lo aprendido.
 

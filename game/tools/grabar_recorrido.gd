@@ -39,7 +39,7 @@ func _process(_dt: float) -> void:
 			_tarde = true
 			main.dn.set_preset(2)
 	if fr >= total + 20:
-		print("REC_FIN mobs_visitados=", toured, " frames=", fr, " muertes=", main.fly.gen - 1, " cerebro=", main.fly.real_brain.status if main.fly.use_real else "local", " frutas=", main.fly.eaten, " pos_fly=", main.fly.global_position)
+		print("REC_FIN mobs_visitados=", toured, " frames=", fr, " muertes=", main.fly.gen - 1, " cerebro=", main.fly.real_brain.status, " frutas=", main.fly.eaten, " pos_fly=", main.fly.global_position)
 		get_tree().quit()
 var _tarde := false
 func _count(_dt: float) -> void:
@@ -92,5 +92,5 @@ func _setup() -> void:
 	fly.rotation.y = randf() * TAU
 	main.foc = fly
 	main.cam_foc = null
-	print("REC_INICIO pos=", best, " mobs_cerca=", bs, " cerebro_real=", fly.use_real)
+	print("REC_INICIO pos=", best, " mobs_cerca=", bs, " cerebro=", fly.real_brain.status)
 	Engine.time_scale = 1.8

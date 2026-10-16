@@ -1,28 +1,24 @@
 # El cerebro de la mosca
 
-La mosca puede pensar con dos cerebros intercambiables (tecla **B**). Los dos heredan de `FlyBrain`, así que `fly.gd` y el panel neuronal los usan igual.
+El cerebro de la mosca es el **conectoma real de *Drosophila*** (FlyWire), simulado en un servidor Python (`brain_server/`) al que se conecta el juego (`remote_brain.gd`). Antes existía también una red local de 80 neuronas, pero se eliminó: ahora **el servidor es imprescindible**. `fly_brain.gd` solo conserva la interfaz común (`rate[]` de 80 grupos, `step`, `reset`, colores del panel) que usan la mosca y el panel de actividad.
 
-## 1. Cerebro local (`fly_brain.gd`)
+## 1. El panel de actividad y los 80 grupos
 
-Red de 80 neuronas *leaky integrate-and-fire* con la arquitectura del olfato y el escape de *Drosophila*:
+El panel de la esquina (80 cuadraditos; brillo = tasa de disparo) usa los colores de `FlyBrain.group_color`. Cada cuadradito es el **promedio de un grupo de neuronas del conectoma** (no una neurona suelta); el servidor agrupa las 138.639 neuronas en 80 grupos con este orden:
 
-| Índices | Grupo | Función |
-|---|---|---|
-| 0–1 | ORN | olfato de cada antena |
-| 2–3 | looming | detectores de amenaza izquierdo y derecho |
-| 4 | hambre | |
-| 5–12 | PN | neuronas de proyección (procesan el olor) |
-| 13–72 | células de Kenyon | «memoria»: cada una recibe 4 PN al azar |
-| 73–74 | MBON | acercarse / evitar |
-| 75–76 | DN giro | izquierda / derecha |
-| 77 | DN avance | |
-| 78–79 | fibra gigante | escape ante amenaza muy cercana |
+| Índices | Color | Grupo | Función |
+|---|---|---|---|
+| 0–1 | azul | ORN | olfato de cada antena |
+| 2–3 | azul | looming | detectores de amenaza izquierdo y derecho |
+| 4 | azul | hambre | |
+| 5–12 | celeste | PN | neuronas de proyección (procesan el olor) |
+| 13–72 | violeta | células de Kenyon | cuerpos fungiformes (memoria asociativa en la mosca real) |
+| 73–74 | amarillo | MBON | neuronas de salida: acercarse / evitar |
+| 75–76 | verde | DN giro | izquierda / derecha |
+| 77 | verde | DN avance | |
+| 78–79 | rojo | fibra gigante | escape ante amenaza muy cercana |
 
-Las sinapsis se guardan como listas salientes (*event-driven*): solo se recorren las neuronas que disparan. Aprende con dopamina: `reward()` (al comer) refuerza Kenyon → MBON «acercar»; `punish()` (peligro o dolor) refuerza Kenyon → MBON «evitar». Al renacer se apaga la actividad (`reset`) pero **se conservan los pesos**.
-
-El panel de la esquina (80 cuadraditos; brillo = tasa de disparo) usa los colores de `FlyBrain.group_color`: azul sentidos, celeste PN, violeta Kenyon, amarillo MBON, verde motoras, rojo fibra gigante.
-
-## 2. Cerebro real (`remote_brain.gd` + `brain_server/`)
+## 2. El servidor del conectoma (`remote_brain.gd` + `brain_server/`)
 
 El **conectoma de FlyWire** (138.639 neuronas, ~15 millones de sinapsis, versión 783) simulado con el modelo LIF de Shiu et al. (2023), compilado con numba, en un servidor Python que escucha en `127.0.0.1:9009`. Instrucciones de puesta en marcha en [`brain_server/README.md`](../brain_server/README.md).
 
@@ -40,7 +36,7 @@ Servidor → Godot:
 {"turn": -1..1, "fwd": 0..1, "gf": 0..1, "kc": 0..1, "raw": {...}, "view": [80 valores], "t_ms": 12345.0}
 ```
 
-`turn > 0` = girar a la derecha. `view` es la actividad del conectoma **agrupada en 80 grupos** (promedio de la tasa de disparo de cada grupo) para alimentar el panel neuronal, que con el cerebro real no muestra neuronas sueltas sino promedios. Si el servidor no responde, `RemoteBrain` cae al cerebro local sin errores y reintenta cada 3 s.
+`turn > 0` = girar a la derecha. `view` es la actividad del conectoma **agrupada en 80 grupos** (promedio de la tasa de disparo de cada grupo) para alimentar el panel neuronal, que con el cerebro real no muestra neuronas sueltas sino promedios. Si el servidor no responde (`live = false`), la mosca **se queda quieta**, sin hambre ni edad, y `RemoteBrain` reintenta conectar cada 3 s; el HUD muestra `SIN SERVIDOR` o `esperando al servidor…`.
 
 ### Cómo se traduce el conectoma en movimiento
 
@@ -52,14 +48,13 @@ Servidor → Godot:
 
 ## 3. Dolor y aprendizaje (`fly.gd`)
 
-Como el conectoma no cambia sus pesos, el aprendizaje de la mosca vive **en las entradas del cerebro**, así que funciona con los dos cerebros.
+Como el conectoma no cambia sus pesos, el aprendizaje de la mosca vive **en las entradas del cerebro** (antes de enviarlas al servidor).
 
 **Dolor.** Un choque lateral contra algo vertical (`|normal.y| < 0.7`: muro, tronco, roca) provoca:
 
 - dolor = 1 (decae en ~0,8 s) que activa el detector de amenaza del lado golpeado, y por tanto huida/giro hacia el lado contrario;
 - una **memoria del lugar** (hasta 14 puntos, 10 s) que cuenta como amenaza delante de la mosca mientras está a < 6 m;
 - un rebote suave (giro de hasta 0,9 rad a ~3 rad/s) y un impulso hacia arriba;
-- `brain.punish()` (solo efectivo en el cerebro local);
 - si el choque es de frente, el lado del rebote se elige al azar (para no sesgar el giro).
 
 **Pared pegada.** Si el contacto continuo supera 0,5 s, la mosca retrocede ~0,9 s a 5 m/s, sube y gira hacia la dirección de la normal de la pared.

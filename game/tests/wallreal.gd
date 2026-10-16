@@ -15,7 +15,6 @@ func _ready() -> void:
 	add_child(main)
 	Engine.time_scale = 1.0
 	main.fly.persist_learning = false
-	main.nv.brain = main.fly.set_real_brain(true)
 	main.fly.real_brain.start(int(OS.get_cmdline_user_args()[1]))
 func _physics_process(dt: float) -> void:
 	t += dt

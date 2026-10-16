@@ -16,10 +16,8 @@ const THREAT_RANGE := 8.0     # a qué distancia "ve" amenazas (mobs y hechizos)
 
 # ---------------------------------------------------------------- ESTADO
 var world                      # referencia a main.gd (el mundo): terreno, mat(), log_msg()...
-var brain: FlyBrain = FlyBrain.new()   # el cerebro en uso: local (80 neuronas) o REAL (RemoteBrain, conectoma)
-var local_brain: FlyBrain = brain      # el cerebro de 80 neuronas (con aprendizaje)
-var real_brain := RemoteBrain.new()    # el cerebro real: se conecta a cerebro_real/fly_server.py
-var use_real := false
+var real_brain := RemoteBrain.new()    # el cerebro: conectoma real de FlyWire, a través de brain_server/fly_server.py
+var brain: FlyBrain = real_brain       # (mismo objeto, visto como FlyBrain: lo usa el panel de actividad)
 var alive := true              # los hechizos y mobs comprueban esto antes de interactuar
 var energy := 100.0            # 0 = muere de hambre
 var gen := 1                   # nº de vida actual (al morir renace y conserva lo aprendido)
@@ -28,7 +26,6 @@ var age := 0.0                 # segundos vividos en esta vida
 var eye_height := 0.05         # altura de los ojos para la cámara en primera persona
 var ou1 := 0.0                 # ruido lento (Ornstein-Uhlenbeck) que hace girar a la mosca al azar
 var ou2 := 0.0                 # idem para el otro lado
-var pun_t := 0.0               # temporizador del "castigo" por estar cerca de peligro
 var bump_t := 0.0              # >0 justo después de chocar: sube un poco para sortear el obstáculo
 var pain := 0.0                # dolor (1 = recién chocó); decae en ~0,8 s y activa la huida del lado golpeado
 var pain_side := 0.0           # lado del golpe: -1 izquierda, +1 derecha
@@ -58,23 +55,15 @@ var bump_turn := 0.0           # giro pendiente tras un choque (se aplica poco a
 var bump_dir := 1.0            # lado hacia el que gira tras un choque (+1 / -1)
 var wl: MeshInstance3D         # ala izquierda (se anima aleteando)
 var wr: MeshInstance3D         # ala derecha
+var _idle_x := PackedFloat32Array()   # entradas en reposo mientras no hay servidor
 var fruits: Array = []         # nodos fruta del grupo "fruit" (se cargan en el primer tick)
-
-
-## Cambia entre el cerebro local (80 neuronas) y el real (conectoma por servidor). Devuelve el cerebro activo.
-func set_real_brain(on: bool) -> FlyBrain:
-	use_real = on
-	if on:
-		real_brain.start()
-		brain = real_brain
-	else:
-		brain = local_brain
-	return brain
 
 
 ## Construye el cuerpo visual (abdomen, ojos rojos, alas), la luz y la colisión.
 func setup(w) -> void:
 	world = w
+	_idle_x.resize(FlyBrain.N)
+	real_brain.start()             # conecta con el servidor del conectoma (puerto 9009)
 	# --- Colisión: una esfera pequeña. Capa 4 (la mosca), choca con capa 1 (mundo estático).
 	# Los mobs están en la capa 2 y la máscara de la mosca no la incluye, así que los atraviesa.
 	collision_layer = 4
@@ -202,6 +191,11 @@ func _physics_process(dt: float) -> void:
 		fruits = get_tree().get_nodes_in_group("fruit")
 	if not _learn_loaded:
 		_load_learning()
+	# Sin servidor del conectoma no hay cerebro: la mosca espera quieta (sin hambre ni edad) y se reintenta conectar.
+	if not real_brain.live:
+		real_brain.step(_idle_x)
+		velocity = Vector3.ZERO
+		return
 	age += dt
 	energy -= HUNGER_RATE * dt
 	if energy <= 0.0:
@@ -364,7 +358,6 @@ func _physics_process(dt: float) -> void:
 				wall_fear = minf(1.5, wall_fear + 0.12 + 0.2 * cue)
 				if pain_events % 5 == 0:
 					_save_learning()
-			brain.punish()
 			if bump_t <= 0.0:
 				bump_dir = -pain_side
 				bump_turn = bump_dir * 0.9
@@ -386,20 +379,13 @@ func _physics_process(dt: float) -> void:
 		if global_position.distance_to(fn.global_position) < 1.5:
 			energy = minf(100.0, energy + 35.0)
 			eaten += 1
-			brain.reward()                # dopamina: refuerza el olor que acababa de oler
-			world.log_msg("Mosca: comió fruta, la dopamina refuerza el olor")
+			world.log_msg("Mosca: comió fruta")
 			world.place_fruit(fn)         # la fruta reaparece en otro sitio
 			break
-	# Estar cerca de un peligro durante >1 s "castiga" y refuerza la vía de evitar
-	if near < 2.5:
-		pun_t += dt
-		if pun_t > 1.0:
-			pun_t = 0.0
-			brain.punish()
 
 
 ## Muerte: se registra, renace en un punto aleatorio y reinicia la actividad (pero NO los pesos
-## sinápticos: lo aprendido se conserva entre vidas).
+## de la memoria: lo aprendido se conserva entre vidas).
 func die(why: String) -> void:
 	if immortal:
 		return

@@ -13,7 +13,6 @@ func _ready() -> void:
 	if md == "nomobs":
 		for m in get_tree().get_nodes_in_group("mobs"): m.set_physics_process(false)
 	if md == "nofly": main.fly.set_physics_process(false)
-	main.nv.brain = main.fly.set_real_brain(true)
 	main.fly.real_brain.start(int(OS.get_cmdline_user_args()[1]))
 func _physics_process(dt: float) -> void:
 	t += dt
