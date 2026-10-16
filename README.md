@@ -2,9 +2,9 @@
 
 **Un pequeño mundo de fantasía oscura donde una mosca vive con el cerebro de una mosca de verdad.**
 
-<video src="https://github.com/Santiluna99/fly-dark-fantasy/raw/main/docs/img/nocturnia.mp4" controls muted width="100%"></video>
+[![Vídeo del juego: haz clic para verlo](docs/img/video_portada.jpg)](docs/img/nocturnia.mp4)
 
-[▶ Ver el vídeo del juego](docs/img/nocturnia.mp4)
+**▶ [Haz clic en la imagen para ver el vídeo del juego](docs/img/nocturnia.mp4)** (32 segundos)
 
 ## ¿Qué es esto?
 
