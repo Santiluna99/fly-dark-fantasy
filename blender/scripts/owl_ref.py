@@ -35,7 +35,7 @@ P=split_by_bone(V,Fc,col,bone_of,"buho")
 
 # ---- cabeza esculpida ----
 def load_head():
-    MDL="/mnt/user-data/outputs/nocturnia/assets/models/head_owl.mdl"
+    MDL="/mnt/user-data/outputs/hollowfly/assets/models/head_owl.mdl"
     Vv=[];Ff=[]
     for l in open(MDL):
         p=l.split()
@@ -51,7 +51,7 @@ HV,HF=load_head(); HN=normals(HV,HF)
 hc=np.clip(proj(HV,HN),0,1)**2.2
 # la cabeza sculpt ya trae colores propios; se mezcla con la proyeccion para dar el plumaje blanco-gris de la hoja
 own=np.zeros_like(HV)
-for i,l in enumerate([l for l in open("/mnt/user-data/outputs/nocturnia/assets/models/head_owl.mdl") if l.startswith('v ')]):
+for i,l in enumerate([l for l in open("/mnt/user-data/outputs/hollowfly/assets/models/head_owl.mdl") if l.startswith('v ')]):
     own[i]=list(map(float,l.split()[4:7]))
 P.append(mk("cabeza",HV,HF,np.clip(0.85*hc+0.15*own**2.2,0,1)*1.35,"head"))
 # ojos naranjas brillantes

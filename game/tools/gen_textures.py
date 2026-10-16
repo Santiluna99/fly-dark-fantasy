@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Genera texturas 'pintadas' tileables (256x256) para Nocturnia.
+Genera texturas 'pintadas' tileables (256x256) para Hollowfly.
 Todas son periódicas (se repiten sin costuras): el ruido se filtra en frecuencia.
 
 Uso:  python tools/gen_textures.py        -> assets/textures/*.png

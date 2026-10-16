@@ -1,6 +1,6 @@
 > Documentación técnica de la carpeta [`brain_server/`](../brain_server). Para una explicación sencilla, ver [`brain_server/README.md`](../brain_server/README.md).
 
-# Cerebro real de la mosca para Nocturnia (conectoma FlyWire)
+# Cerebro real de la mosca para Hollowfly (conectoma FlyWire)
 
 Servidor Python que simula el conectoma completo (138.639 neuronas, 15 millones de sinapsis; FlyWire v783) y se conecta al juego
 por TCP local (puerto 9009). Godot le manda lo que siente la mosca y recibe giro, avance y actividad.

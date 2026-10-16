@@ -1,14 +1,12 @@
-# Nocturnia
+# Hollowfly
 
 **Un pequeño mundo de fantasía oscura donde una mosca vive con el cerebro de una mosca de verdad.**
 
-[![Vídeo del juego: haz clic para verlo](docs/img/video_portada.jpg)](docs/img/nocturnia.mp4)
-
-**▶ [Haz clic en la imagen para ver el vídeo del juego](docs/img/nocturnia.mp4)** (32 segundos)
+![La mosca volando por Hollowfly](docs/img/hollowfly.gif)
 
 ## ¿Qué es esto?
 
-Nocturnia es un mundo en 3D con aspecto de videojuego antiguo, como los de la primera PlayStation. Tiene aldeas, castillos, bosques, pantanos, lluvia y un ciclo de día y noche. En él viven aldeanos, caballeros, una secta y monstruos. Cada uno va a lo suyo: pasean, conversan, comercian y se pelean.
+Hollowfly es un mundo en 3D con aspecto de videojuego antiguo, como los de la primera PlayStation. Tiene aldeas, castillos, bosques, pantanos, lluvia y un ciclo de día y noche. En él viven aldeanos, caballeros, una secta y monstruos. Cada uno va a lo suyo: pasean, conversan, comercian y se pelean.
 
 La protagonista es una **mosca de la fruta**. Nadie la controla: ni el jugador ni unas reglas escritas a mano. La mueve una copia digital del **cerebro real de una mosca**.
 

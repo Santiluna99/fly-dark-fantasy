@@ -1,6 +1,6 @@
 > Documentación técnica de la carpeta [`blender/`](../blender). Para una explicación sencilla, ver [`blender/README.md`](../blender/README.md).
 
-# Personajes Nocturnia (Lobo Hechicero, Mago Búho, Troll de Colina)
+# Personajes Hollowfly (Lobo Hechicero, Mago Búho, Troll de Colina)
 
 Reconstruidos con Blender (bpy) a partir de la hoja de personajes: silueta frontal/lateral -> malla, y color proyectado desde las vistas.
 
@@ -19,7 +19,7 @@ Dentro de Godot, si se ven oscuros, sube el parámetro `tint` del shader PS1 (x1
 ## Mobs orgánicos hechos en Blender (sin hoja de referencia)
 - `scripts/mobgen.py`: librería (cuerpo con modificador Skin + Subsurf, accesorios esculpidos, colores de vértice sucios, armadura con pesos automáticos, animaciones idle/walk/attack, exportación .glb).
 - `scripts/mob_*.py`: skeleton, ghoul, wraith, plague, human (0-2), knight, goblin (0-1), goat. Ejecutar: `python mob_knight.py` (ajusta la ruta OUT en mobgen.py).
-- `modelos/mob_*.glb|.blend`: resultados; ya están en `nocturnia/assets/models/`.
+- `modelos/mob_*.glb|.blend`: resultados; ya están en `hollowfly/assets/models/`.
 
 ## Animaciones ampliadas
 Todos los personajes tienen ahora codos, rodillas y pies (huesos `fore_*`, `shin_*`, `foot_*`) además de brazos/piernas.

@@ -1,5 +1,5 @@
 extends Node3D
-## Nocturnia: mundo dark fantasy PS1. Todo se genera por código.
+## Hollowfly: mundo dark fantasy PS1. Todo se genera por código.
 ## Cámaras: C = primera / tercera / libre · N = siguiente ser · F = volver a la mosca · V = velocidad
 
 # =====================================================================
@@ -119,7 +119,7 @@ func _ready() -> void:
 	# Aparecen mobs, frutas y la mosca; luego se crea la interfaz.
 	_population()
 	_ui()
-	log_msg("La lluvia cae sobre Nocturnia...")
+	log_msg("La lluvia cae sobre Hollowfly...")
 
 
 # ---------- utilidades ----------

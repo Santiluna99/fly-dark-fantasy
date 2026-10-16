@@ -1,6 +1,6 @@
 > **Nota:** documento histórico; algunas partes ya no reflejan el proyecto actual. El cerebro de la mosca se explica en [`CEREBRO.md`](CEREBRO.md).
 
-# Nocturnia (Godot 4.3+)
+# Hollowfly (Godot 4.3+)
 
 Abre la carpeta con Godot 4.3 o superior y pulsa F5. No hay assets: todo se genera por código.
 Probado en Godot 4.3 y 4.7 (headless y OpenGL por software); Vulkan no se pudo probar en mi entorno.

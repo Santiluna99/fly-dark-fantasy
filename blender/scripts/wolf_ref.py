@@ -77,7 +77,7 @@ def mk(name,V,Fc,col=None,bone="spine",smooth=False):
 
 def load_head():
     """Cabeza esculpida .mdl -> escalada por eje a las medidas de la cabeza en la hoja."""
-    MDL="/mnt/user-data/outputs/nocturnia/assets/models/head_wolf.mdl"
+    MDL="/mnt/user-data/outputs/hollowfly/assets/models/head_wolf.mdl"
     V=[];Fc=[]
     for l in open(MDL):
         p=l.split()

@@ -1,4 +1,4 @@
-# Generador de personajes ORGÁNICOS para Nocturnia (sin hoja de referencia).
+# Generador de personajes ORGÁNICOS para Hollowfly (sin hoja de referencia).
 #  - Cuerpo: esqueleto de nodos -> modificador Skin + Subsurf -> malla continua low-poly, con relieve por ruido.
 #  - Accesorios (cabeza, ropa, armadura, armas): mallas esculpidas con bmesh (esferas deformadas, tubos cónicos, losas biseladas).
 #  - Colores por vértice sucios (ruido, suciedad abajo, cavidades oscuras).  - Armadura con pesos automáticos + idle/walk/attack.

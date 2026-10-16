@@ -1,6 +1,6 @@
 # Documentación
 
-Aquí están las explicaciones **a fondo** de cómo funciona Nocturnia por dentro. Son más técnicas que los README de cada carpeta. Si solo quieres jugar, no hace falta leerlas: empieza por el [README principal](../README.md).
+Aquí están las explicaciones **a fondo** de cómo funciona Hollowfly por dentro. Son más técnicas que los README de cada carpeta. Si solo quieres jugar, no hace falta leerlas: empieza por el [README principal](../README.md).
 
 ## Qué documento leer según lo que busques
 
