@@ -1,77 +1,93 @@
 # Nocturnia
 
-Un mundo de fantasía oscura con estética PlayStation 1, hecho en **Godot 4.7** (GDScript, renderer de compatibilidad), poblado por aldeanos, caballeros, un culto y monstruos con inteligencia propia… y por una **mosca de la fruta** que explora el mapa guiada por el **conectoma real de *Drosophila*** (FlyWire, 138.639 neuronas) simulado en un servidor Python.
+**Un pequeño mundo de fantasía oscura donde una mosca vive con el cerebro de una mosca de verdad.**
 
 ![Captura del juego](docs/img/captura_juego.png)
 
-## Qué contiene
+## ¿Qué es esto?
 
-| Carpeta | Contenido |
-|---|---|
-| [`game/`](game) | Proyecto de Godot 4.7: mundo, mobs, mosca, cerebros, shaders, interfaz y pruebas |
-| [`brain_server/`](brain_server) | Servidor Python con el conectoma de FlyWire (simulador LIF compilado con numba). **Imprescindible**: es el único cerebro de la mosca |
-| [`blender/`](blender) | Scripts de Blender (bpy) que generaron los personajes `.glb` y sus animaciones |
-| [`docs/`](docs) | Documentación técnica detallada |
+Nocturnia es un mundo en 3D con aspecto de videojuego antiguo, como los de la primera PlayStation. Tiene aldeas, castillos, bosques, pantanos, lluvia y un ciclo de día y noche. En él viven aldeanos, caballeros, una secta y monstruos. Cada uno va a lo suyo: pasean, conversan, comercian y se pelean.
 
-## Inicio rápido
+La protagonista es una **mosca de la fruta**. Nadie la controla: ni el jugador ni unas reglas escritas a mano. La mueve una copia digital del **cerebro real de una mosca**.
 
-1. Instala [Godot 4.7](https://godotengine.org/) (el proyecto declara `config/features = 4.7`; se probó también en 4.3).
-2. Arranca el **servidor del cerebro** (la mosca no se mueve sin él):
+## ¿Cómo que «un cerebro real»?
+
+Unos científicos (el proyecto **FlyWire**) cartografiaron el cerebro completo de una mosca de la fruta. Son unas **140.000 neuronas** y millones de conexiones entre ellas, y está publicado para que cualquiera lo use.
+
+Este proyecto pone ese mapa a funcionar en el ordenador, como si el cerebro estuviera vivo, y lo conecta con la mosca del juego:
+
+1. **La mosca siente.** Huele la fruta con sus dos antenas y ve si algo se le acerca peligrosamente. También tiene hambre.
+2. **El cerebro decide.** Lo que siente se convierte en señales que entran en las neuronas del cerebro simulado.
+3. **La mosca se mueve.** Lo que responde el cerebro se traduce en girar a un lado o al otro, avanzar o huir.
+
+Así la mosca busca fruta, esquiva a los monstruos, se choca, aprende a tenerle miedo a las paredes, y a veces se muere de hambre (y renace).
+
+## Cómo probarlo
+
+Hacen falta dos programas abiertos a la vez: **el cerebro** y **el juego**.
+
+### 1. Lo que necesitas instalar (una sola vez)
+
+- **[Godot 4.7](https://godotengine.org/)**, el programa con el que está hecho el juego. Es gratis.
+- **[Python 3.10 o más nuevo](https://www.python.org/)**, para el cerebro.
+- **[Git](https://git-scm.com/)**, para descargar los datos del cerebro.
+
+### 2. Encender el cerebro
+
+Abre una terminal dentro de la carpeta `brain_server` y escribe:
 
 ```bash
-cd brain_server
-pip install -r requirements.txt      # Python 3.10+, numba, numpy, scipy, pandas, pyarrow
-sh descargar_datos.sh                # (descargar_datos.bat en Windows) ~370 MB, una sola vez
-sh iniciar.sh                        # (iniciar.bat en Windows)  ->  "Cerebro listo: 138639 neuronas"
+pip install -r requirements.txt
 ```
 
-3. Abre la carpeta `game/` en Godot (la primera vez importa los recursos; así se registran los `class_name` y se generan los `.uid`) y pulsa **F5**.
+Después, en Windows, haz doble clic en **`iniciar.bat`** (en Mac o Linux: `sh iniciar.sh`).
 
-El juego se conecta solo al puerto 9009. Mientras no haya servidor, la mosca espera quieta (sin hambre) y el HUD dice `SIN SERVIDOR`; se reintenta la conexión cada 3 s. Tras conectar, el cerebro tarda unos segundos en responder por primera vez. Detalles en [`brain_server/README.md`](brain_server/README.md).
+La primera vez descarga unos 370 MB de datos del cerebro, así que tarda un rato. Cuando veas **«Cerebro listo»**, deja esa ventana abierta.
+
+### 3. Abrir el juego
+
+Abre Godot, elige **Importar**, selecciona la carpeta `game` y pulsa **F5** para jugar.
+
+Si el cerebro no está encendido, la mosca se queda quieta esperando y arriba pone **«SIN SERVIDOR»**. En cuanto lo enciendas, se pone en marcha sola.
 
 ## Controles
 
-| Tecla | Acción |
+| Tecla | Qué hace |
 |---|---|
-| **C** | Cámara: primera persona → tercera persona → cámara libre |
-| **N** / **F** | Siguiente ser a seguir / volver a la mosca |
-| **V** | Velocidad de simulación ×1 / ×3 / ×8 |
-| **T** / **Y** | Salta a la siguiente hora del día / paso automático del tiempo |
-| **R** | Enciende o apaga la lluvia |
-| **M** | Mapa completo (clic = la cámara libre viaja ahí) |
+| **C** | Cambia la cámara: ver con los ojos del personaje, verlo desde detrás, o cámara libre |
+| **N** | Seguir al siguiente personaje |
+| **F** | Volver a seguir a la mosca |
+| **V** | Acelerar el tiempo (×1, ×3, ×8) |
+| **T** | Saltar a otra hora del día |
+| **Y** | Hacer que el día pase solo (o pararlo) |
+| **R** | Encender o apagar la lluvia |
+| **M** | Abrir el mapa (haz clic en un punto para viajar allí) |
 | **F11** | Pantalla completa |
-| Cámara libre | **WASD** mover, **Q/E** bajar/subir, **Shift** ×4, **Ctrl** ×0,25, rueda = velocidad, arrastrar = mirar |
+| **Arrastrar el ratón** | Mirar alrededor |
 
-## La mosca en pocas líneas
+En la cámara libre: **W A S D** para moverte, **Q** y **E** para bajar y subir, **Shift** para ir más rápido y la rueda del ratón para cambiar la velocidad.
 
-- **Sentidos:** dos antenas que comparan el olor de las frutas, detectores de amenaza (*looming*) a izquierda y derecha para mobs y hechizos, y hambre. El olor **no atraviesa muros**.
-- **Cerebro:** el conectoma real de FlyWire, a través de `brain_server/`. Ver [`docs/CEREBRO.md`](docs/CEREBRO.md).
-- **Dolor y aprendizaje:** si choca con una pared siente dolor, retrocede y aprende a temerlas mediante unos «bigotes» (rayos hacia delante). El aprendizaje vive en las entradas del cerebro, no en el conectoma.
-- **Simetría:** el cerebro real se «espeja» periódicamente para que gire parejo a izquierda y derecha.
-- **Hambre:** aguanta unos 220 s sin comer; al morir renace y conserva lo aprendido.
-- **Registro en pantalla:** solo muestra lo que hace la mosca (olfatea, huye, tiene hambre, choca, come, muere).
+## Qué hay en cada carpeta
 
-## Documentación
+| Carpeta | Qué es |
+|---|---|
+| [`game/`](game) | El juego en sí: el mundo, los personajes, la mosca y los efectos visuales |
+| [`brain_server/`](brain_server) | El cerebro de la mosca. Es un programa aparte que el juego necesita para que la mosca se mueva |
+| [`blender/`](blender) | Las recetas con las que se crearon los personajes en 3D y sus animaciones |
+| [`docs/`](docs) | Explicaciones más a fondo, para quien quiera saber cómo funciona todo por dentro |
 
-- [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md): cómo está organizado el código, el mundo, los mobs y el render.
-- [`docs/CEREBRO.md`](docs/CEREBRO.md): conectoma real, protocolo cliente-servidor, dolor, aprendizaje y simetría.
-- [`docs/RENDIMIENTO.md`](docs/RENDIMIENTO.md): de 2 a 165 FPS, LOD de mobs y límites de física.
-- [`docs/PRUEBAS.md`](docs/PRUEBAS.md): metodología de pruebas, cómo ejecutarlas y resultados.
-- [`docs/HISTORIAL.md`](docs/HISTORIAL.md): todo lo que se hizo, en orden, con el porqué de cada decisión.
-- [`blender/README.md`](blender/README.md): generación de personajes y animaciones.
-- [`docs/README_ORIGINAL_DEL_PROYECTO.md`](docs/README_ORIGINAL_DEL_PROYECTO.md): el README histórico del proyecto (texturas, mobs, post-proceso; menciona el cerebro local, ya eliminado).
+Cada carpeta tiene su propio README con más detalle.
 
-## Limitaciones conocidas
+## Cosas a tener en cuenta
 
-- **Sin servidor no hay mosca activa:** el cerebro local de 80 neuronas se eliminó; el juego exige el servidor del conectoma (necesita Python, numba y ~370 MB de datos).
-- El conectoma real tiene pesos fijos: **no aprende**. El aprendizaje por dolor está en la entrada del cerebro, no dentro del conectoma.
-- El giro del cerebro real lo produce un **lector que se entrenó con el propio conectoma** (no un circuito motor conocido), y corre a ~0,7× el tiempo real en un solo núcleo.
-- El rendimiento se midió sin GPU (renderizado por software y modo *headless*); los FPS reales dependen de tu equipo.
-- La mayoría de las pruebas de comportamiento son estadísticas con pocas semillas: dan orden de magnitud, no cifras exactas.
+- **Sin el cerebro encendido, la mosca no hace nada.** Es lo que la mueve.
+- **El cerebro de la mosca no aprende.** Es un mapa fijo. Lo que sí aprende (el miedo a las paredes) se añadió por fuera, en lo que la mosca siente.
+- **El cerebro va un poco más lento que uno real** (al 70 % de velocidad, más o menos), así que sus reflejos son algo lentos.
+- Necesita un ordenador con algo de potencia: el cerebro usa un núcleo del procesador entero.
 
-## Créditos y licencias
+## Créditos
 
-- Conectoma: **FlyWire** (*Drosophila melanogaster*, versión 783). Parámetros del modelo LIF de Shiu et al. (2023). Revisa los términos de uso y la atribución de los datos antes de redistribuirlos: el repositorio **no** incluye los datos, los descarga `descargar_datos.sh`.
-- Motor: [Godot Engine](https://godotengine.org/) (licencia MIT).
-- Texturas, modelos y scripts de este repositorio: generados por código para el proyecto.
-- **Licencia del código: pendiente de elegir** (añade un archivo `LICENSE`; por ejemplo MIT si quieres que sea libre).
+- **Cerebro de la mosca:** [FlyWire](https://flywire.ai/), versión 783. Modelo de simulación basado en Shiu y colaboradores (2023). Los datos no están en este repositorio: se descargan al encender el cerebro por primera vez.
+- **Motor del juego:** [Godot Engine](https://godotengine.org/), licencia MIT.
+- **Texturas, modelos y personajes:** generados con código para este proyecto.
+- **Licencia del código:** todavía sin elegir.

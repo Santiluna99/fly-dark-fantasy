@@ -1,28 +1,55 @@
-# Personajes Nocturnia (Lobo Hechicero, Mago Búho, Troll de Colina)
+# Los personajes
 
-Reconstruidos con Blender (bpy) a partir de la hoja de personajes: silueta frontal/lateral -> malla, y color proyectado desde las vistas.
+Esta carpeta guarda **las recetas con las que se crearon los personajes en 3D** del juego. Están hechos con [Blender](https://www.blender.org/), un programa gratuito de modelado 3D.
 
-- modelos/*.blend  -> abrir en Blender (malla con color por vértice "Col", esqueleto "Rig", animaciones idle/walk/attack en pistas NLA)
-- modelos/*.glb    -> para Godot 4 (arrastrar a res://). Los colores van como COLOR_0 (ya en espacio lineal).
-- scripts/         -> para regenerar. Rutas absolutas dentro de los scripts (/home/claude/blender/...): cámbialas a tu carpeta.
-    * wolf_ref.py, owl_ref.py, troll_ref.py  (uno por personaje), charlib.py y fit.py (comunes)
-    * Requiere: Blender 4.x/5.x con Python o `pip install bpy numpy scipy pillow scikit-image`
-- comparaciones/   -> hoja vs modelo (frente, lado, espalda)
-- referencia/      -> recortes de la hoja usados
+![Personajes dentro del juego](../docs/img/personajes_en_godot.png)
 
-Notas: el búho no tiene vista lateral pura en la hoja, así que su profundidad se estima por proporción.
-Las manos del lobo, el libro y las garras del búho son piezas simples añadidas a mano.
-Dentro de Godot, si se ven oscuros, sube el parámetro `tint` del shader PS1 (x1.5).
+## ¿Qué son estas «recetas»?
 
-## Mobs orgánicos hechos en Blender (sin hoja de referencia)
-- `scripts/mobgen.py`: librería (cuerpo con modificador Skin + Subsurf, accesorios esculpidos, colores de vértice sucios, armadura con pesos automáticos, animaciones idle/walk/attack, exportación .glb).
-- `scripts/mob_*.py`: skeleton, ghoul, wraith, plague, human (0-2), knight, goblin (0-1), goat. Ejecutar: `python mob_knight.py` (ajusta la ruta OUT en mobgen.py).
-- `modelos/mob_*.glb|.blend`: resultados; ya están en `nocturnia/assets/models/`.
+Ningún personaje se esculpió a mano. Cada uno sale de un pequeño programa (un *script*) que le dice a Blender, paso a paso, cómo construirlo:
 
-## Animaciones ampliadas
-Todos los personajes tienen ahora codos, rodillas y pies (huesos `fore_*`, `shin_*`, `foot_*`) además de brazos/piernas.
-Animaciones: `idle` (respira, mira a los lados, desplaza el peso), `walk` (flexión de rodilla y codo, giro de torso, rebote de cadera),
-`attack` (armar, golpear, recuperar), `hit` (retroceso) y `death` (tambalea, cae de espaldas; no se repite).
-- `scripts/mobgen.py`: `std_bones`/`std_anims` nuevos. Los accesorios (espadas, botas, escudos) se reasignan solos al hueso del segmento.
-- `scripts/reanimate.py <blend> <salida>`: añade esos huesos a lobo/búho/troll y repesa las mallas (las mangas del lobo siguen al brazo).
-- `scripts/posepreview.py`: render rápido de poses para revisar.
+1. **Da forma al cuerpo**, con su cabeza, brazos, piernas, ropa y armas.
+2. **Lo pinta** con colores sucios y gastados, al estilo de los juegos antiguos.
+3. **Le pone un esqueleto** de huesos invisibles para poder moverlo.
+4. **Le crea las animaciones:** estar de pie respirando, caminar, atacar, recibir un golpe y caer muerto.
+5. **Lo guarda** en un archivo que el juego puede usar.
+
+La ventaja es que, si se quiere cambiar algo (por ejemplo, que todos los caballeros sean más altos), basta con tocar la receta y volver a generarlos.
+
+![Hoja de animaciones](../docs/img/hoja_animaciones.png)
+
+## Qué personajes hay
+
+**Los protagonistas,** hechos a partir de un dibujo de referencia:
+- El **lobo hechicero** (`wolf_ref.py`)
+- El **mago búho** (`owl_ref.py`)
+- El **troll de colina** (`troll_ref.py`)
+
+**Los habitantes del mundo:**
+- **Aldeanos** (`mob_human.py`), en tres versiones
+- **Caballeros** (`mob_knight.py`)
+- **Duendes** (`mob_goblin.py`), en dos versiones
+- **Hombre cabra** (`mob_goat.py`)
+- **Esqueleto** (`mob_skeleton.py`)
+- **Necrófago** (`mob_ghoul.py`)
+- **Espectro** (`mob_wraith.py`)
+- **Médico de la peste** (`mob_plague.py`)
+
+**Las herramientas comunes**, que comparten todas las recetas:
+- `mobgen.py` y `charlib.py` tienen las piezas básicas: cuerpos, esqueletos y animaciones.
+- `reanimate.py` añade codos, rodillas y pies a los personajes antiguos para que se muevan mejor.
+- `posepreview.py` saca fotos rápidas de las poses para revisarlas.
+
+## ¿Necesito esto para jugar?
+
+**No.** Los personajes ya están creados y guardados dentro del juego, en `game/assets/models/`. Esta carpeta solo hace falta si quieres modificarlos o crear personajes nuevos.
+
+## Si quieres regenerarlos
+
+Necesitas Blender 4 o más nuevo, o Python con el paquete `bpy`. Antes de ejecutar las recetas, cambia dentro de ellas la carpeta donde se guardan los resultados (la variable `OUT` de `mobgen.py` y las rutas de los otros scripts) por una de tu ordenador. Después, por ejemplo:
+
+```bash
+python mob_knight.py
+```
+
+Los detalles técnicos están en [`docs/PERSONAJES_BLENDER.md`](../docs/PERSONAJES_BLENDER.md).

@@ -20,7 +20,7 @@ El panel de la esquina (80 cuadraditos; brillo = tasa de disparo) usa los colore
 
 ## 2. El servidor del conectoma (`remote_brain.gd` + `brain_server/`)
 
-El **conectoma de FlyWire** (138.639 neuronas, ~15 millones de sinapsis, versión 783) simulado con el modelo LIF de Shiu et al. (2023), compilado con numba, en un servidor Python que escucha en `127.0.0.1:9009`. Instrucciones de puesta en marcha en [`brain_server/README.md`](../brain_server/README.md).
+El **conectoma de FlyWire** (138.639 neuronas, ~15 millones de sinapsis, versión 783) simulado con el modelo LIF de Shiu et al. (2023), compilado con numba, en un servidor Python que escucha en `127.0.0.1:9009`. Instrucciones de puesta en marcha en [`SERVIDOR_CEREBRO.md`](SERVIDOR_CEREBRO.md).
 
 ### Protocolo (JSON por líneas sobre TCP)
 
