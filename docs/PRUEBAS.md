@@ -16,6 +16,7 @@ No hay GPU en el entorno de desarrollo, así que las pruebas son **automáticas,
 godot --headless --path game --import                                     # una vez
 godot --headless --path game res://tests/soak5.tscn                       # estabilidad general
 godot --headless --path game res://tests/hstat.tscn                       # estadísticas del terreno
+godot --headless --path game --fixed-fps 60 res://tests/camjit.tscn -- 1 # sacudidas de la cámara al seguir a cada mob
 # con el cerebro real (en otra terminal: cd brain_server && python fly_server.py --port 9011)
 godot --headless --path game res://tests/stickreal.tscn -- <semilla> <aprende 0|1> 9011
 godot --headless --path game res://tests/wallreal.tscn  -- <semilla> 9011

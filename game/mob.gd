@@ -352,7 +352,11 @@ func _physics_process(dt: float) -> void:
 		_interact()
 	else:
 		# Si no hay nada que hacer: pasea hacia puntos aleatorios cerca de su casa.
-		if global_position.distance_to(wp) < 1.5 or randf() < 0.004:
+		# distancia en horizontal: wp tiene la altura de "home", no la del terreno en ese punto; con la 3D
+		# un mob en cuesta nunca "llegaba" y oscilaba sobre el punto girando 180° cada tick (y la cámara con él)
+		var to_wp := wp - global_position
+		to_wp.y = 0.0
+		if to_wp.length() < 1.5 or randf() < 0.004:
 			var r := leash if leash > 0.0 else (10.0 if faction == 0 else (14.0 if faction == 1 else 48.0))
 			wp = home + Vector3(randf_range(-r, r), 0, randf_range(-r, r))
 		desired = wp - global_position

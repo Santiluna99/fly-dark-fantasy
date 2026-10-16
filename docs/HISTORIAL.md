@@ -60,6 +60,8 @@ Todo lo que se hizo en el proyecto, en orden aproximado, con el porqué de cada 
 - Se perdió el aprendizaje por dopamina del cerebro local; queda el miedo aprendido a las paredes, que actúa en las entradas.
 - Comprobación con el cerebro real tras el cambio: vuelo libre 180 s, 2 semillas, contacto con paredes 2,9 % y 3,4 %, y 5 y 2 frutas comidas.
 
+- **Cámara descontrolada al seguir a algunos mobs:** el mob comprobaba si había llegado a su punto de paseo con la distancia 3D, y ese punto tiene la altura de su casa; en cuesta nunca llegaba y oscilaba encima girando 180° cada tick. Ahora se mide en horizontal. Prueba: `tests/camjit.tscn` (de 100–240 cambios bruscos de giro en 4 s a 0–1).
+
 ## Ideas pendientes
 
 - Música dentro del juego (pistas `.ogg` propias por momento del día; Spotify solo sería control remoto y su música no puede emitirse en directos de YouTube).
