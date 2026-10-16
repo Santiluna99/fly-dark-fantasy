@@ -7,7 +7,6 @@ Todo lo que se hizo en el proyecto, en orden aproximado, con el porqué de cada 
 - **Mundo procedural:** terreno por ruido con biomas, castillo, 4 aldeas, faro, cascadas con puente, luna, estrellas, lluvia y niebla; todo generado por código (`main.gd`).
 - **Estética PS1:** shader de objetos (vértices que tiemblan, paleta posterizada, textura pixelada) y un post-proceso con dithering de Bayer, viñeta, grano y azules fríos pasados a gris verdoso.
 - **Mobs:** cuatro facciones (aldeanos, caballeros, culto, monstruos) que pelean, huyen, comercian, hablan y lanzan hechizos (fuego, escarcha, sombra, luz).
-- **Mosca con cerebro local:** red LIF de 80 neuronas con la arquitectura del olfato y el escape de *Drosophila*, con aprendizaje por dopamina que se conserva al renacer.
 
 ## Fase 2: assets propios y personajes
 
@@ -19,13 +18,13 @@ Todo lo que se hizo en el proyecto, en orden aproximado, con el porqué de cada 
 
 ## Fase 3: el cerebro real
 
-- **Integración del conectoma de FlyWire** (138.639 neuronas) con un servidor Python (`brain_server/`) y un cliente TCP en Godot (`remote_brain.gd`). Tecla **B** para alternar; si el servidor no está, el juego sigue con el local.
+- **Integración del conectoma de FlyWire** (138.639 neuronas) con un servidor Python (`brain_server/`) y un cliente TCP en Godot (`remote_brain.gd`).
 - **Corrección de «la mosca da vueltas en el sitio»:** el lector olfativo se había calibrado solo con un contraste enorme y devolvía giros de ±0,3 a ±0,8 con olor simétrico. Se recalibró con las condiciones del juego (5 intensidades × 12 asimetrías, correlación 0,90 en validación), se suavizó la respuesta, se bajó el giro máximo a ~1,5 rad/s y se separaron las antenas a 1,6 m. Resultado: de 0 a 2-3 frutas por prueba y sin vueltas sobre el sitio.
 
 ## Fase 4: animación, rendimiento y pulido
 
 - **Animación más rica:** codos, rodillas y pies (huesos `fore_*`, `shin_*`, `foot_*`) en todos los personajes y animaciones nuevas `idle`, `walk`, `attack`, `hit` y `death`, con fundidos entre estados. Las mangas del lobo siguen al brazo.
-- **Integración y uso en PC:** cómo enlazar los personajes en Godot, cómo activar el cerebro real por consola (`--real-brain`) y pantalla completa con **F11**.
+- **Integración y uso en PC:** cómo enlazar los personajes en Godot y pantalla completa con **F11**.
 - **Rendimiento (2 → 165 FPS con el cerebro real):** LOD de mobs, mallas unidas, animaciones congeladas a distancia y otros ajustes (ver [RENDIMIENTO.md](RENDIMIENTO.md)).
 - **Agua más calmada:** un solo color con manchas leves en el shader.
 - **Marcadores del minimapa:** puntos amarillos y un cuadrado blanco fuera del mapa se debían a que no se recortaba el dibujo (`clip_contents`).
@@ -33,7 +32,7 @@ Todo lo que se hizo en el proyecto, en orden aproximado, con el porqué de cada 
 - **«Teletransportes» de la mosca:** eran muertes con renacimiento instantáneo. Ahora la pantalla se oscurece y muestra el motivo (`flash_death`).
 - **Reparto de mobs:** `spread_spot` elige entre 40 candidatos válidos el más alejado de los ocupados; así se ven mobs a lo largo de todo el recorrido de la mosca.
 - **Ahogamiento y reaparición:** los mobs mueren si caen al agua y reaparecen en un punto seguro al azar. Una primera versión provocó ahogamientos masivos (puntos de aparición empinados, mal *fallback* en el agua); se corrigió con `is_safe_spot` y `safe_spot`.
-- **Vídeos de recorrido** alternando primera y tercera persona, con el cerebro local y con el real.
+- **Vídeos de recorrido** alternando primera y tercera persona.
 
 ## Fase 5: dolor y aprendizaje
 
@@ -52,13 +51,10 @@ Todo lo que se hizo en el proyecto, en orden aproximado, con el porqué de cada 
 - **Los mobs lejanos ya no atraviesan muros:** error introducido por la optimización anterior, corregido con rayos antes de cada paso.
 - **Sesgo a la izquierda:** medido (85–87 % del giro) y corregido con el espejo periódico del cerebro real y dos sesgos de código (borde del mapa, choque de frente).
 
-## Fase 7: solo cerebro real
+## Fase 7: el servidor, imprescindible
 
-- **Se eliminó el cerebro local de 80 neuronas** (red LIF con aprendizaje por dopamina) del juego y del repositorio. Ahora el único cerebro es el conectoma de FlyWire, a través de `brain_server/`.
-- `fly_brain.gd` pasó de ser la red neuronal a una interfaz mínima (80 grupos, `rate[]`, `step`, `reset`, colores del panel). `remote_brain.gd` ya no tiene fallback local; se quitaron la tecla **B**, el argumento `--real-brain`, `punish()`/`reward()` y la dopamina.
 - **Sin servidor la mosca espera quieta** (sin hambre ni edad) y el HUD indica `SIN SERVIDOR`; se reintenta conectar cada 3 s. Tras conectar, la primera respuesta puede tardar unos segundos.
-- Se perdió el aprendizaje por dopamina del cerebro local; queda el miedo aprendido a las paredes, que actúa en las entradas.
-- Comprobación con el cerebro real tras el cambio: vuelo libre 180 s, 2 semillas, contacto con paredes 2,9 % y 3,4 %, y 5 y 2 frutas comidas.
+- Comprobación: vuelo libre 180 s, 2 semillas, contacto con paredes 2,9 % y 3,4 %, y 5 y 2 frutas comidas.
 
 - **Cámara descontrolada al seguir a algunos mobs:** el mob comprobaba si había llegado a su punto de paseo con la distancia 3D, y ese punto tiene la altura de su casa; en cuesta nunca llegaba y oscilaba encima girando 180° cada tick. Ahora se mide en horizontal. Prueba: `tests/camjit.tscn` (de 100–240 cambios bruscos de giro en 4 s a 0–1).
 

@@ -27,7 +27,7 @@ por TCP local (puerto 9009). Godot le manda lo que siente la mosca y recibe giro
 ## Decisiones y límites (importante)
 - **El giro lo da un lector que entrené yo**, no un circuito motor conocido: el signo de las neuronas descendentes individuales
   era ambiguo y ruidoso. Para la huida se gira en sentido contrario a la amenaza; para el olfato, hacia el lado de más olor.
-- **No hay aprendizaje**: el conectoma tiene pesos fijos; en modo real no funcionan la recompensa ni el castigo.
+- **No hay aprendizaje**: el conectoma tiene pesos fijos, así que no hay recompensa ni castigo dentro del cerebro.
 - **El avance** sale de la actividad total de las neuronas descendentes (no de una neurona concreta).
 - **El olor lleva realce de contraste entre antenas** (`CONTRAST` en `remote_brain.gd`): la diferencia real entre antenas es de
   un par de %, y el cerebro no lateraliza con diferencias tan pequeñas.
@@ -44,7 +44,7 @@ por TCP local (puerto 9009). Godot le manda lo que siente la mosca y recibe giro
 - Servidor: suavizado más largo (`ALPHA` 0,06) y `OLF_STEER` 1,8.
 - Godot (`remote_brain.gd`): giro máximo ~1,5 rad/s (`TURN_RATE` 0,14), zona muerta de 0,1, `CONTRAST` 12 y frenado cerca de la fruta. `fly.gd`: antenas separadas 1,6 m.
 **Resultado (3 semillas, 53–77 s):** sin vueltas sobre el sitio (giro total 18–20 rad en 77 s, antes 83 rad en 59 s) y 2, 2 y 3 frutas comidas (antes 0).
-**Límites que siguen.** A más de ~20 m de la fruta la señal entre antenas es débil y la mosca avanza casi en línea recta con deriva aleatoria; con mobs cerca el giro de huida domina. Sigue sin haber aprendizaje en modo real.
+**Límites que siguen.** A más de ~20 m de la fruta la señal entre antenas es débil y la mosca avanza casi en línea recta con deriva aleatoria; con mobs cerca el giro de huida domina. El conectoma sigue sin aprender.
 
 ## Nota sobre el cliente (Godot)
 El **espejo izquierda/derecha** que compensa el sesgo de giro del conectoma se hace en el cliente (`game/remote_brain.gd`), no aquí: el servidor recibe las entradas ya intercambiadas y su giro se invierte al llegar. Ver [`docs/CEREBRO.md`](CEREBRO.md). Para probar con varias instancias a la vez usa un puerto distinto por servidor: `python fly_server.py --port 9021`.

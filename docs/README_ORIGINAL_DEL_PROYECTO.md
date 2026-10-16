@@ -1,4 +1,4 @@
-> **Nota:** documento histórico. Menciona el cerebro local de 80 neuronas y la tecla **B**, que ya se eliminaron: el único cerebro es el conectoma real (ver [`CEREBRO.md`](CEREBRO.md)).
+> **Nota:** documento histórico; algunas partes ya no reflejan el proyecto actual. El cerebro de la mosca se explica en [`CEREBRO.md`](CEREBRO.md).
 
 # Nocturnia (Godot 4.3+)
 
@@ -31,16 +31,7 @@ Las texturas y cabezas esculpidas se generan con scripts y el juego las usa tal 
 - `main.gd`: terreno por ruido (biomas), castillo, 4 aldeas, faro, luna, estrellas, lluvia, niebla.
 - `mob.gd`: 4 facciones (aldeanos, caballeros, culto, monstruos). Pelean, huyen, comercian, hablan, reaparecen.
 - `projectile.gd`: magia con fuego, escarcha (ralentiza), sombra (roba vida) y luz (cura).
-- `fly.gd` + `fly_brain.gd`: la mosca. Red LIF de 80 neuronas: antenas → PN → cuerpos fungiformes → MBON → neuronas motoras, más fibra gigante de escape. Aprende con dopamina al comer y con castigo cerca de peligro. Cuando muere renace y conserva lo aprendido.
-
-## Conectar el conectoma real (FlyWire)
-`FlyBrain` usa listas de sinapsis salientes (event-driven), que es la estructura adecuada para escalar.
-Para usar ~140.000 neuronas:
-1. Exporta de FlyWire (Codex) las conexiones `pre_id, post_id, peso` y remapea los IDs a 0..N-1.
-2. Identifica neuronas sensoriales (olfativas, visuales looming) y descendentes (giro, avance) y mapea `x[...]` de `fly.gd` a ellas.
-3. Sustituye `_init()` para cargar las sinapsis y hazlo variable en tamaño (hoy `N=80` es constante).
-4. GDScript no llega a esa escala en tiempo real: porta `step()` a C# o a una GDExtension (Rust/C++) y ejecútalo en un hilo.
-
+- `fly.gd`: la mosca. Cuando muere renace y conserva lo aprendido.
 
 ## Personajes de Blender (.glb)
 El lobo alquimista, el búho y el ogro/troll usan modelos reconstruidos en Blender a partir de la hoja de personajes
@@ -50,12 +41,6 @@ El lobo alquimista, el búho y el ogro/troll usan modelos reconstruidos en Blend
 - Si falta el .glb, `MobModel` usa los modelos de primitivas de siempre.
 - `tools/studio.tscn` (copiar a la raíz del proyecto) muestra los tres en un escenario de prueba.
 
-
-## Cerebro real (conectoma FlyWire, 138.639 neuronas)
-La mosca puede usar el cerebro real a través de un servidor Python (carpeta `cerebro_real/`, ver su `LEEME.md`).
-- **B** alterna entre el cerebro local (80 neuronas, con aprendizaje) y el real; `--real-brain` arranca con el real.
-- Código: `remote_brain.gd` (cliente TCP que hereda de FlyBrain; si no hay servidor, usa el local), y los cambios en `fly.gd` y `main.gd`.
-- En modo real no hay aprendizaje (el conectoma tiene pesos fijos).
 
 ## Estética PS1 dark fantasy (post-proceso)
 - `post_ps1.gdshader`: paleta reducida con dithering Bayer, viñeta, grano y azules fríos pasados a gris verdoso. Se añade en `main.gd::_post()` (capa 0, debajo del HUD). Ajusta `levels`, `vignette`, `grain` en el shader.

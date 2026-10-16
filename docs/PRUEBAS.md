@@ -40,8 +40,6 @@ godot --headless --path game res://tests/ptime.tscn     -- <semilla> 9011 base
 
 | Cambio | Antes | Después |
 |---|---|---|
-| Rebote suave + dolor + retroceso si queda pegada (cerebro local, 5 semillas × 300 s; histórico) | 7–28 %, racha hasta 4,7 s | 3,5–7 %, racha ≤ 0,2 s |
-| Aprendizaje por bigotes (cerebro local, 3 semillas × 300 s; histórico) | ~6 % constante | 1,4–3,4 % |
 | Aprendizaje (cerebro **real**, 3 semillas × 180 s, inicio ingenuo) | 7,9 / 14,2 / 26,0 % | 0,0 / 8,3 / 0,6 % |
 | Relieve suave (cerebro real, aprendiendo) | 0,5 / 7,4 % | 0,1 / 5,0 % |
 | Olor ocluido por muros (cerebro real, fruta tras una pared, 90 s) | 15–25 % de contacto, 30–43 episodios | 4–8 %, 8–18 episodios |
@@ -63,4 +61,4 @@ godot --headless --path game res://tests/ptime.tscn     -- <semilla> 9011 base
 
 ## Vídeos
 
-`game/tools/grabar_recorrido.gd` graba recorridos con Godot *movie maker*: `godot --path game --write-movie salida.avi --fixed-fps 30 res://tools/grabar_recorrido.tscn -- 1800 [--guiar]` (1800 fotogramas = 60 s; `--guiar` lleva a la mosca de mob en mob; hay que tener el servidor del cerebro en marcha). Se hicieron dos recorridos (uno con el cerebro local, hoy eliminado, y otro con el real) alternando primera y tercera persona. Los vídeos no están en el repositorio por su tamaño (súbelos como *release*).
+`game/tools/grabar_recorrido.gd` graba recorridos con Godot *movie maker*: `godot --path game --write-movie salida.avi --fixed-fps 30 res://tools/grabar_recorrido.tscn -- 1800 [--guiar]` (1800 fotogramas = 60 s; `--guiar` lleva a la mosca de mob en mob; hay que tener el servidor del cerebro en marcha). Se grabaron recorridos alternando primera y tercera persona. Los vídeos no están en el repositorio por su tamaño (súbelos como *release*).

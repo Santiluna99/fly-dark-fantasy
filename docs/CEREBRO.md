@@ -1,6 +1,6 @@
 # El cerebro de la mosca
 
-El cerebro de la mosca es el **conectoma real de *Drosophila*** (FlyWire), simulado en un servidor Python (`brain_server/`) al que se conecta el juego (`remote_brain.gd`). Antes existía también una red local de 80 neuronas, pero se eliminó: ahora **el servidor es imprescindible**. `fly_brain.gd` solo conserva la interfaz común (`rate[]` de 80 grupos, `step`, `reset`, colores del panel) que usan la mosca y el panel de actividad.
+El cerebro de la mosca es el **conectoma real de *Drosophila*** (FlyWire), simulado en un servidor Python (`brain_server/`) al que se conecta el juego (`remote_brain.gd`). **El servidor es imprescindible**. `fly_brain.gd` solo conserva la interfaz común (`rate[]` de 80 grupos, `step`, `reset`, colores del panel) que usan la mosca y el panel de actividad.
 
 ## 1. El panel de actividad y los 80 grupos
 
