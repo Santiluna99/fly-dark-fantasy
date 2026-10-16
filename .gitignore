@@ -1,0 +1,14 @@
+# Godot
+.godot/
+*.translation
+export_presets.cfg
+# Datos pesados del conectoma (se bajan con descargar_datos.sh/.bat)
+brain_server/datos/
+# Python
+__pycache__/
+*.pyc
+.venv/
+# Grabaciones y temporales
+*.avi
+*.mp4
+/tmp/
