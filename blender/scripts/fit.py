@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 # Reconstruccion a partir de la hoja: cuerpo = anillos superelipticos con anchos de la silueta frontal y profundidad de la lateral;
 # cabeza esculpida escalada a las medidas de la hoja; color por vertice PROYECTADO desde las vistas frente / espalda / lado.
 import bpy, math, sys, json

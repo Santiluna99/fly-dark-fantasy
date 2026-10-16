@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 class_name DayNight extends Node
 ## CICLO DE DÍA Y NOCHE. La hora (0-24) interpola entre fotogramas clave que definen cielo, sol/luna,
 ## luz ambiente, niebla, saturación y lluvia. Teclas: T = siguiente momento (mañana/día/tarde/noche), Y = tiempo automático.

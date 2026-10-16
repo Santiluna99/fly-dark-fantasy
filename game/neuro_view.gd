@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 class_name NeuroView extends Control
 ## Panel con la actividad de las 80 neuronas (brillo = tasa de disparo)
 

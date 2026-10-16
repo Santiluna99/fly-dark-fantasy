@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 class_name FlyBrain extends RefCounted
 ## Interfaz común del cerebro de la mosca. El cerebro es el REAL (conectoma de FlyWire, ver remote_brain.gd);
 ## esta clase solo define lo que usan la mosca y el panel de actividad:

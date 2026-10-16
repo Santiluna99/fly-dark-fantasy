@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 """
 Esculpe cabezas de personajes con campos de distancia (SDF) y las convierte en malla
 low-poly con marching cubes. Salida: assets/models/head_*.mdl (+ .json con los ojos).

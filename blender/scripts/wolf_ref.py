@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 # Lobo Hechicero ajustado a la hoja de personajes. Exporta out/lobo_ref.glb
 import sys; sys.path.insert(0,"/home/claude/blender")
 from fit import *

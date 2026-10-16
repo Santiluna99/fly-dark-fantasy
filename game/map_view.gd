@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 class_name MapView extends Control
 ## MINIMAPA (esquina, centrado en lo que sigue la cámara) y MAPA COMPLETO (tecla M, clic = viajar con la cámara libre).
 ## Muestra el terreno por bioma con relieve sombreado, el castillo, aldeas y faro, la mosca (amarillo),

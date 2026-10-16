@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 class_name Assets
 ## Carga las texturas (assets/textures/*.png) y modelos (assets/models/*.mdl) generados
 ## con tools/gen_textures.py y tools/gen_models.py. Si falta algo, el juego usa el

@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 # Libreria comun: reconstruye un personaje a partir de una hoja de vistas (frente / espalda / lateral).
 #  - Cuerpo: casco visual (voxels) con secciones elipticas por tramo de la silueta frontal; marching cubes -> malla low-poly.
 #  - Color por vertice proyectado desde las vistas de la hoja.  - Rig simple + animaciones + exporta .glb y .blend

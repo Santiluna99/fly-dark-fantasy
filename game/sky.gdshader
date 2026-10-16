@@ -1,3 +1,5 @@
+// Hollowfly - Copyright (C) 2026 Santiluna99
+// Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 // SHADER DE CIELO con ciclo día/noche: degradado cenit->horizonte, nubes que se estiran al horizonte,
 // estrellas (solo de noche), sol con halo y luna creciente. Los colores los anima daynight.gd según la hora.
 shader_type sky;

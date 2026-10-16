@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 import bpy, sys, math
 from mathutils import Vector
 name, act, frames = sys.argv[-3], sys.argv[-2], [int(x) for x in sys.argv[-1].split(",")]

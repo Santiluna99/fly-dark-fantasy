@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 """Reanima lobo/búho/troll: añade codos, rodillas y pies a su armadura, repesa las mallas y crea idle/walk/attack/hit/death."""
 import sys; sys.path.insert(0, "/home/claude/blender")
 import bpy, math

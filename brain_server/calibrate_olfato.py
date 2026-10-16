@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 """
 Reentrena SOLO el lector olfativo con las condiciones reales del juego: intensidades de olor distintas (10-90 Hz de media) y
 asimetrias entre antenas de -80% a +80%, incluidas las simetricas (objetivo 0, para que no haya giro fantasma).

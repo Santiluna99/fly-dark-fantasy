@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 class_name MobModel
 ## Personajes low-poly con rostro, manos, ropa y extremidades animables.
 ## Variantes: human, knight, goat, owl (culto), goblin, ogre (monstruos)

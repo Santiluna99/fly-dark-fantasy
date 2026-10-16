@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 extends Node
 ## Graba el recorrido de la mosca alternando 3ª y 1ª persona. Uso: godot --write-movie out.avi --fixed-fps 30 -- <frames>
 var main: Node

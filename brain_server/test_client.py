@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 """Prueba del servidor: escenarios de estimulo y lectura de giro/avance."""
 import socket, json, time, sys
 s=socket.create_connection(("127.0.0.1",9009)); f=s.makefile("rwb")

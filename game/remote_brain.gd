@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 class_name RemoteBrain extends FlyBrain
 ## CEREBRO REAL (conectoma FlyWire, 138.639 neuronas) a través de un servidor Python local.
 ## Hereda de FlyBrain para que Fly.gd y NeuroView lo usen igual que al cerebro de 80 neuronas.

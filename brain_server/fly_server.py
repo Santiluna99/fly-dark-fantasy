@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 """
 Servidor del cerebro real de la mosca para Godot (conectoma FlyWire v783, 138.639 neuronas).
 

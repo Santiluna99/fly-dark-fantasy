@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 # Generador de personajes ORGÁNICOS para Hollowfly (sin hoja de referencia).
 #  - Cuerpo: esqueleto de nodos -> modificador Skin + Subsurf -> malla continua low-poly, con relieve por ruido.
 #  - Accesorios (cabeza, ropa, armadura, armas): mallas esculpidas con bmesh (esferas deformadas, tubos cónicos, losas biseladas).

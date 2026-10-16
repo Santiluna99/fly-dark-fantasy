@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 extends Node3D
 ## Hollowfly: mundo dark fantasy PS1. Todo se genera por código.
 ## Cámaras: C = primera / tercera / libre · N = siguiente ser · F = volver a la mosca · V = velocidad
@@ -1047,6 +1049,14 @@ func _ui() -> void:
 	minimap.size = Vector2(120, 120)
 	minimap.build(self)
 	cl.add_child(minimap)
+	# aviso legal visible (GPL-3.0 y término adicional de NOTICE: conservar la autoría)
+	var credit := Label.new()
+	credit.text = "Hollowfly · © 2026 Santiluna99 · GPL-3.0 · sin garantía"
+	credit.add_theme_font_size_override("font_size", 8)
+	credit.modulate = Color(1, 1, 1, 0.55)
+	cl.add_child(credit)
+	credit.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 6)
+	credit.position.y -= 26        # justo encima de la fila de botones
 	map_layer = CanvasLayer.new()
 	map_layer.layer = 5
 	map_layer.visible = false

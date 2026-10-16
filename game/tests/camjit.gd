@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 extends Node
 ## Sigue a cada mob con la cámara (primera y tercera persona) y mide cuánto se sacude:
 ## giro total de la cámara por segundo y número de cambios bruscos de sentido.

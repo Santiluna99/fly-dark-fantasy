@@ -1,3 +1,5 @@
+// Hollowfly - Copyright (C) 2026 Santiluna99
+// Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 // POST-PROCESO PS1 / DARK FANTASY: paleta reducida con dithering ordenado (Bayer 4x4), viñeta oscura,
 // grano de película y un ligero tinte verde-ceniza en sombras. Se dibuja sobre la imagen 3D, debajo del HUD.
 shader_type canvas_item;

@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 extends Node3D
 ## Escenario de prueba aislado: suelo, luces y los tres personajes con el shader PS1 del juego.
 var shader: Shader = load("res://ps1.gdshader")   # MobModel.build espera "w.shader"

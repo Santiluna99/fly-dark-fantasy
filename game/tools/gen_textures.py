@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 """
 Genera texturas 'pintadas' tileables (256x256) para Hollowfly.
 Todas son periódicas (se repiten sin costuras): el ruido se filtra en frecuencia.

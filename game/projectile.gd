@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 class_name Projectile extends Node3D
 ## Hechizo en vuelo: fuego, escarcha (ralentiza), sombra (roba vida), luz (cura)
 

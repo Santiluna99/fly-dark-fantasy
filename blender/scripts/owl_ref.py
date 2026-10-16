@@ -1,3 +1,5 @@
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 # Mago Buho ajustado a la hoja. Cuerpo = casco por silueta frontal (sin chispas doradas) con profundidad por proporcion
 # (la hoja no trae perfil puro); cabeza esculpida head_owl.mdl; libro, chispas y garras anadidos. Exporta out/buho_ref.glb/.blend
 import sys; sys.path.insert(0,"/home/claude/blender")

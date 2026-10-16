@@ -1,3 +1,5 @@
+// Hollowfly - Copyright (C) 2026 Santiluna99
+// Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 // SHADER PS1: da el aspecto de PlayStation 1 a todo el juego.
 //  - Los vértices se "pegan" a una rejilla de pantalla (el temblor típico de PS1).
 //  - La paleta se reduce (posterizado) y las texturas no se suavizan.

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 """
 Arreglos sobre fly_circuits.py (mismo modelo LIF, conectoma FlyWire v783):
 

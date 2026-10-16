@@ -90,4 +90,5 @@ Cada carpeta tiene su propio README con más detalle.
 - **Cerebro de la mosca:** [FlyWire](https://flywire.ai/), versión 783. Modelo de simulación basado en Shiu y colaboradores (2023). Los datos no están en este repositorio: se descargan al encender el cerebro por primera vez.
 - **Motor del juego:** [Godot Engine](https://godotengine.org/), licencia MIT.
 - **Texturas, modelos y personajes:** generados con código para este proyecto.
-- **Licencia:** Hollowfly es software libre bajo la [GNU GPL versión 3](LICENSE). Puedes usarlo, estudiarlo, modificarlo y compartirlo, incluso venderlo, siempre que lo que distribuyas basado en él también sea libre, con la misma licencia y con su código disponible.
+- **Licencia:** Hollowfly es software libre bajo la [GNU GPL versión 3](LICENSE). Puedes usarlo, estudiarlo, modificarlo y compartirlo, incluso venderlo, siempre que lo que distribuyas basado en él también sea libre, con la misma licencia y con su código disponible. Además, hay que conservar la autoría «Hollowfly, creado por Santiluna99» (ver [NOTICE](NOTICE)).
+- **Autor:** © 2026 [Santiluna99](https://github.com/Santiluna99).

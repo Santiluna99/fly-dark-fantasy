@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Hollowfly - Copyright (C) 2026 Santiluna99
+# Software libre bajo la GNU GPL v3 (ver LICENSE y NOTICE).
 """
 Calibra los LECTORES de giro del cerebro real. Para cada estimulo (amenaza visual, olor) corre N ensayos con el estimulo mas
 fuerte a la izquierda y a la derecha, y aprende pesos sobre las neuronas descendentes (DN):  w = media(der) - media(izq).
