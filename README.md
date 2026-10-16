@@ -1,6 +1,6 @@
 # Hollowfly
 
-**Un pequeño mundo de fantasía oscura donde una mosca vive con el cerebro de una mosca de verdad.**
+**Un pequeño mundo de dark fantasy donde una mosca vive con el cerebro de una mosca de verdad.**
 
 ![La mosca volando por Hollowfly](docs/img/hollowfly.gif)
 
