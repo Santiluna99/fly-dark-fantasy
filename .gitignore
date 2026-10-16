@@ -12,3 +12,4 @@ __pycache__/
 *.avi
 *.mp4
 /tmp/
+!docs/img/nocturnia.mp4
