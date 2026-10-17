@@ -6,7 +6,7 @@
 
 ## ¿Qué es esto?
 
-Hollowfly es un mundo en 3D con aspecto de videojuego antiguo, como los de la primera PlayStation. Tiene aldeas, castillos, bosques, pantanos, lluvia y un ciclo de día y noche. En él viven aldeanos, caballeros, una secta y monstruos. Cada uno va a lo suyo: pasean, conversan, comercian y se pelean.
+Hollowfly es un mundo en 3D con aspecto de videojuego antiguo, como los de PlayStation 1. Tiene aldeas, castillos, bosques, pantanos, lluvia y un ciclo de día y noche. En él viven aldeanos, caballeros, una secta y monstruos. Cada uno pasea, conversa, comercia y se pelea con otros.
 
 La protagonista es una **mosca de la fruta**. Nadie la controla: ni el jugador ni unas reglas escritas a mano. La mueve una copia digital del **cerebro real de una mosca**.
 
