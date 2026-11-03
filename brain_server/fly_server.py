@@ -27,6 +27,24 @@ ALPHA = 0.06              # suavizado de las tasas (constante ~100 ms de cerebro
 OLF_STEER = 1.8          # fuerza del giro hacia el olor (lector aprendido; derecha = girar a la derecha)
 DN_NORM_HZ, GF_NORM_HZ = 5500.0, 250.0
 
+# ---- DROGAS (simulacion cualitativa, reversible) -------------------------------------------------------------
+# Cada droga cambia la fuerza de las sinapsis segun el NEUROTRANSMISOR de la neurona presinaptica (anotaciones FlyWire, top_nt)
+# y/o anade un ruido Poisson de fondo a todas las neuronas. "level" 0..1 (dosis x curva de efecto): factor = 1 + level*(f-1).
+# En level 0 se restauran EXACTAMENTE los pesos originales (copia base) y el ruido a 0: la mosca vuelve a su actividad normal.
+NT_CLASS = {"acetylcholine": "ach", "glutamate": "glu", "gaba": "gaba", "dopamine": "da", "serotonin": "ser", "octopamine": "oct"}
+DRUGS = {
+    # nombre: (factores por neurotransmisor a dosis 1, ruido de fondo Poisson en Hz a dosis 1)
+    # El ruido de fondo es la palanca de la actividad motora: sin estimulos el cerebro esta en silencio (fwd 0), y 0.2 Hz ya da fwd ~0.5.
+    "alcohol":    ({"gaba": 1.8, "ach": 0.8, "glu": 0.85}, 0.12),
+    "cafeina":    ({"ach": 1.08, "gaba": 0.92, "da": 1.2}, 0.20),
+    "cocaina":    ({"da": 2.5, "oct": 2.5, "ser": 1.6}, 0.45),
+    "anfetamina": ({"da": 3.0, "oct": 3.0}, 0.80),
+    "nicotina":   ({"ach": 1.15}, 0.25),
+    "sedante":    ({"gaba": 2.2}, 0.0),
+    "lsd":        ({"ser": 3.0, "glu": 1.1}, 0.20),
+    "anestesico": ({"gaba": 2.8, "ach": 0.6}, 0.0),
+}
+
 
 class Server:
     def __init__(self, speed=1.0):
@@ -61,6 +79,15 @@ class Server:
         self.dn_idx = dec["dn_idx"]; self.wv, self.wo = dec["vision_w"], dec["olfato_w"]
         self.sv, self.so = float(dec["vision_scale"]), float(dec["olfato_scale"])
         self.bv, self.bo = float(dec["vision_bias"]), float(dec["olfato_bias"])
+        # --- drogas: indices de sinapsis por neurotransmisor presinaptico + copia base de los pesos ---
+        nt = m.top_nt.fillna("").map(NT_CLASS).fillna("").values if "top_nt" in m.columns else np.full(self.b.n, "")
+        rows = np.repeat(np.arange(self.b.n, dtype=np.int32), np.diff(self.b.indptr).astype(np.int64))
+        self.base_w = self.b.data.copy()
+        self.nt_syn = {k: np.nonzero(nt[rows] == k)[0] for k in set(NT_CLASS.values())}
+        del rows
+        self.bg = np.zeros(self.b.n, np.float32)
+        self.drug = None
+        self.drug_level = 0.0
         self.view = np.zeros(80, np.float32)
         self.est = {"va": 0.0, "oa": 0.0, "dn": 0.0, "gf": 0.0, "kc": 0.0}
         self.stim = (0.0, 0.0, 0.0, 0.0, 0.0)
@@ -70,6 +97,27 @@ class Server:
         self.lock = threading.Lock()
         self.t_ms = 0.0
         self.run = True
+
+    def set_drug(self, name, level):
+        """Aplica (o retira) una droga. level<=0 o nombre desconocido -> pesos y ruido EXACTAMENTE como al inicio."""
+        level = float(max(0.0, min(1.5, level)))
+        spec = DRUGS.get(name) if name else None
+        if spec is None or level <= 0.001:
+            if self.drug is not None:
+                self.b.data[:] = self.base_w
+                self.bg[:] = 0.0
+                self.b.rates[:] = 0.0          # el bucle vuelve a fijar los estimulos de olor/amenaza en el siguiente paso
+                self.reset_flag = True         # apaga la actividad que haya quedado: el cerebro arranca limpio, como sin droga
+            self.drug, self.drug_level = None, 0.0
+            return
+        facs, noise = spec
+        self.b.data[:] = self.base_w
+        for k, f in facs.items():
+            idx = self.nt_syn.get(k)
+            if idx is not None and len(idx):
+                self.b.data[idx] = self.base_w[idx] * np.float32(1.0 + level * (f - 1.0))
+        self.bg[:] = np.float32(noise * level)
+        self.drug, self.drug_level = name, level
 
     def hz(self, counts, idx):
         return float(counts[idx].sum()) / max(1, len(idx)) / (SLICE_MS / 1000.0)
@@ -82,8 +130,9 @@ class Server:
             with self.lock:
                 ol, orr, ll, lr, h = self.stim; hunger = self.hunger
                 if self.reset_flag:
-                    b.v[:] = b.P["v0"]; b.g[:] = 0; b.ref[:] = 0; self.reset_flag = False
+                    b.v[:] = b.P["v0"]; b.g[:] = 0; b.ref[:] = 0; b.ring[:] = 0; b.ring_n[:] = 0; self.reset_flag = False   # (tambien vacia los spikes en transito: si no, la actividad se auto-mantiene)
             gain = 1.0 + 0.5 * hunger          # hambrienta: responde mas al olor
+            if self.drug is not None: b.rates[:] = self.bg      # ruido de fondo de la droga (solo si hay droga activa)
             b.rates[self.orn[0]] = RATE_ORN * min(1.0, gain * ol / 0.8)
             b.rates[self.orn[1]] = RATE_ORN * min(1.0, gain * orr / 0.8)
             b.rates[self.loom[0]] = RATE_MAX * min(1.0, ll / 0.9)
@@ -131,6 +180,10 @@ class Server:
                 self.stim = (float(o[0]), float(o[1]), float(l[0]), float(l[1]), 0.0)
                 self.hunger = float(q.get("hunger", 0.0))
                 if q.get("reset"): self.reset_flag = True
+                if "drug" in q:
+                    dq = q["drug"]
+                    if dq: self.set_drug(str(dq.get("name", "")), float(dq.get("level", 0.0)))
+                    else: self.set_drug(None, 0.0)
             f.write((json.dumps(self.reply()) + "\n").encode()); f.flush()
 
 
@@ -143,10 +196,21 @@ def main():
     threading.Thread(target=srv.loop, daemon=True).start()
     s = socket.socket(); s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(("127.0.0.1", a.port)); s.listen(4)
-    print(f"Cerebro listo: {srv.b.n} neuronas. Escuchando en 127.0.0.1:{a.port}", flush=True)
-    while True:
-        c, _ = s.accept()
-        threading.Thread(target=srv.handle, args=(c,), daemon=True).start()
+    s.settimeout(1.0)     # en Windows un accept() sin limite de tiempo no deja pasar Ctrl+C; asi vuelve a Python cada segundo
+    print(f"Cerebro listo: {srv.b.n} neuronas. Escuchando en 127.0.0.1:{a.port}  (Ctrl+C para cerrar)", flush=True)
+    try:
+        while True:
+            try:
+                c, _ = s.accept()
+            except socket.timeout:
+                continue
+            c.settimeout(None)
+            threading.Thread(target=srv.handle, args=(c,), daemon=True).start()
+    except KeyboardInterrupt:
+        print("\nCerrando el cerebro...", flush=True)
+    finally:
+        srv.run = False
+        s.close()
 
 
 if __name__ == "__main__":

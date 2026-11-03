@@ -50,6 +50,7 @@ var free_pitch := -0.3
 # Registro de eventos (los últimos 6) que se muestra abajo a la izquierda; hud = texto superior.
 var logs: Array[String] = []
 var hud: Label
+var drug_panel: Control
 var nv: NeuroView   # panel de actividad neuronal (se reasigna al cambiar de cerebro)
 var logl: Label
 # speed_i = índice de velocidad del juego (x1, x3, x8);  fire_lights = luces de fuego que parpadean.
@@ -121,6 +122,7 @@ func _ready() -> void:
 	# Aparecen mobs, frutas y la mosca; luego se crea la interfaz.
 	_population()
 	_ui()
+	_restore_fullscreen()
 	log_msg("La lluvia cae sobre Hollowfly...")
 
 
@@ -1077,13 +1079,16 @@ func _ui() -> void:
 	ml.position = Vector2(8, 8)
 	ml.add_theme_font_size_override("font_size", 10)
 	map_layer.add_child(ml)
-	var items := [["Cámara (C)", _cycle_mode], ["Siguiente (N)", next_target], ["Mosca (F)", _to_fly], ["Vel (V)", _cycle_speed], ["Hora (T)", func(): dn.next_preset()], ["Mapa (M)", _toggle_map]]
+	drug_panel = preload("res://drug_panel.gd").new()
+	drug_panel.build(fly)
+	cl.add_child(drug_panel)
+	var items := [["Cámara (C)", _cycle_mode], ["Siguiente (N)", next_target], ["Mosca (F)", _to_fly], ["Vel (V)", _cycle_speed], ["Hora (T)", func(): dn.next_preset()], ["Mapa (M)", _toggle_map], ["Química (P)", _toggle_drugs], ["Pant. (F11)", _toggle_fullscreen]]
 	for i in items.size():
 		var b := Button.new()
 		b.text = items[i][0]
-		b.position = Vector2(8 + i * 104, 330)
-		b.size = Vector2(100, 24)
-		b.add_theme_font_size_override("font_size", 11)
+		b.position = Vector2(4 + i * 79, 330)
+		b.size = Vector2(77, 24)
+		b.add_theme_font_size_override("font_size", 10)
 		b.pressed.connect(items[i][1])
 		cl.add_child(b)
 
@@ -1121,6 +1126,30 @@ func _cycle_speed() -> void:
 	Engine.time_scale = [1.0, 3.0, 8.0][speed_i]
 
 
+## Pantalla completa (F11, Esc para salir o el botón de abajo). La elección se recuerda para la próxima vez.
+func _toggle_fullscreen() -> void:
+	var fs := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if fs else DisplayServer.WINDOW_MODE_FULLSCREEN)
+	var cfg := ConfigFile.new()
+	cfg.load("user://ajustes.cfg")
+	cfg.set_value("pantalla", "completa", not fs)
+	cfg.save("user://ajustes.cfg")
+
+
+## Al arrancar: si la última vez se cerró en pantalla completa, vuelve a abrirse así.
+func _restore_fullscreen() -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	var cfg := ConfigFile.new()
+	if cfg.load("user://ajustes.cfg") == OK and bool(cfg.get_value("pantalla", "completa", false)):
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+
+## Abre / cierra el panel de drogas (tecla P).
+func _toggle_drugs() -> void:
+	drug_panel.visible = not drug_panel.visible
+
+
 ## Abre / cierra el mapa completo (tecla M).
 func _toggle_map() -> void:
 	map_layer.visible = not map_layer.visible
@@ -1145,17 +1174,22 @@ func _input(e: InputEvent) -> void:
 			KEY_N: next_target()
 			KEY_F: _to_fly()
 			KEY_V: _cycle_speed()
-			KEY_F11:
-				var fs := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
-				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if fs else DisplayServer.WINDOW_MODE_FULLSCREEN)
+			KEY_F11: _toggle_fullscreen()
+			KEY_ESCAPE:
+				if drug_panel.visible:
+					drug_panel.close()
+				elif DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
+					_toggle_fullscreen()
 			KEY_T: dn.next_preset()
 			KEY_Y: dn.auto = not dn.auto
 			KEY_R: dn.rain_auto = false; dn.rain_on = not dn.rain_on
 			KEY_M: _toggle_map()
+			KEY_P: _toggle_drugs()
 	elif e is InputEventMouseButton and e.pressed and mode == 2 and not map_layer.visible:
 		if e.button_index == MOUSE_BUTTON_WHEEL_UP: free_speed = minf(free_speed * 1.2, 400.0)
 		elif e.button_index == MOUSE_BUTTON_WHEEL_DOWN: free_speed = maxf(free_speed / 1.2, 3.0)
-	elif e is InputEventMouseMotion and (e.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0 and not map_layer.visible:
+	elif e is InputEventMouseMotion and (e.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0 and not map_layer.visible \
+			and not (drug_panel.visible and drug_panel.get_global_rect().has_point(e.position)):
 		if mode == 2:
 			free_yaw -= e.relative.x * 0.005
 			free_pitch = clampf(free_pitch - e.relative.y * 0.005, -1.4, 1.4)
@@ -1227,4 +1261,4 @@ func _process(dt: float) -> void:
 	hud.text = "%s · %s\nMosca: gen %d · energía %d · frutas %d · %s\nCerebro: %s\n%s %s%s%s" % [
 		MODES[mode], who, fly.gen, int(fly.energy), fly.eaten, biome_name(fly.global_position),
 		fly.real_brain.status,
-		dn.clock(), dn.preset_name(), " (auto)" if dn.auto else "", ("  · cámara libre %d m/s" % int(free_speed)) if mode == 2 else ""] + ("  · %d FPS" % Engine.get_frames_per_second() if show_fps else "")
+		dn.clock(), dn.preset_name(), " (auto)" if dn.auto else "", ("  · cámara libre %d m/s" % int(free_speed)) if mode == 2 else ""] + ("  · %d FPS" % Engine.get_frames_per_second() if show_fps else "") + ("\nCompuesto: " + fly.drug.status_text() if fly.drug.active() else "")

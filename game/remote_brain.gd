@@ -30,11 +30,24 @@ var conc_r := -1.0
 # cada pocos segundos y se compensa, así que gira parejo a ambos lados.
 var mirror := false
 var _mirror_t := 9.0
+# DROGAS: Fly.gd fija drug_id/drug_level; el servidor cambia las sinapsis (ver brain_server/fly_server.py). Solo se envía cuando cambia.
+var drug_id := ""
+var drug_level := 0.0
+var _drug_sent_id := ""
+var _drug_sent_level := 0.0
+var _drug_dirty := false
+
+
+## Fija la droga que debe aplicar el servidor (id "" o nivel 0 = ninguna).
+func set_drug(id: String, level: float) -> void:
+	drug_id = id
+	drug_level = level
 
 
 ## Intenta conectar con el servidor.
 func start(p: int = 9009) -> void:
 	port = p
+	_drug_dirty = true      # si el servidor se reinicia, vuelve a recibir el estado de la droga
 	sock = StreamPeerTCP.new()
 	sock.connect_to_host("127.0.0.1", port)
 	status = "conectando…"
@@ -75,6 +88,15 @@ func step(x: PackedFloat32Array) -> void:
 			_mirror_t = randf_range(6.0, 12.0)
 		var q := {"orn": [orr, ol] if mirror else [ol, orr], "loom": [x[3], x[2]] if mirror else [x[2], x[3]], "hunger": x[4] / 0.3, "reset": _reset}
 		_reset = false
+		if _drug_dirty or drug_id != _drug_sent_id or absf(drug_level - _drug_sent_level) >= 0.04 or (drug_level <= 0.001 and _drug_sent_level > 0.001):
+			if drug_id == "" or drug_level <= 0.001:
+				if _drug_sent_level > 0.001 or _drug_dirty:
+					q["drug"] = null
+			else:
+				q["drug"] = {"name": drug_id, "level": snappedf(drug_level, 0.01)}
+			_drug_sent_id = drug_id
+			_drug_sent_level = drug_level if drug_id != "" else 0.0
+			_drug_dirty = false
 		sock.put_data((JSON.stringify(q) + "\n").to_utf8_buffer())
 	_read()
 	if _tgt.is_empty():

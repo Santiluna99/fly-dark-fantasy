@@ -18,6 +18,7 @@ const THREAT_RANGE := 8.0     # a qué distancia "ve" amenazas (mobs y hechizos)
 
 # ---------------------------------------------------------------- ESTADO
 var world                      # referencia a main.gd (el mundo): terreno, mat(), log_msg()...
+var drug = preload("res://drugs.gd").new()                 # droga que tiene encima (la maneja el panel de drogas; el efecto lo calcula el conectoma)
 var real_brain := RemoteBrain.new()    # el cerebro: conectoma real de FlyWire, a través de brain_server/fly_server.py
 var brain: FlyBrain = real_brain       # (mismo objeto, visto como FlyBrain: lo usa el panel de actividad)
 var alive := true              # los hechizos y mobs comprueban esto antes de interactuar
@@ -189,6 +190,8 @@ func _say(key: String, msg: String, cooldown: float) -> void:
 func _physics_process(dt: float) -> void:
 	if not alive:
 		return
+	drug.tick(dt)
+	real_brain.set_drug(drug.id, drug.level)
 	if fruits.is_empty():
 		fruits = get_tree().get_nodes_in_group("fruit")
 	if not _learn_loaded:
@@ -307,6 +310,7 @@ func _physics_process(dt: float) -> void:
 		bump_turn -= stp
 	# Velocidad: neurona de avance (77) entre SPEED_MIN y SPEED_MAX
 	var spd := SPEED_MIN + minf(SPEED_MAX - SPEED_MIN, brain.rate[77] * 8.0)
+	spd *= 1.0 - drug.slow()               # sedantes: frenado motor (solo mientras dura la droga)
 	fwd = -global_transform.basis.z       # recalcular tras girar
 	# No salirse del mapa: si el siguiente paso cae fuera del borde, gira en vez de avanzar
 	var lim: float = world.HALF - 4.0
@@ -354,7 +358,7 @@ func _physics_process(dt: float) -> void:
 				last_pain_msg = Time.get_ticks_msec() / 1000.0
 				world.log_msg("Mosca: ¡ay! chocó con una pared (dolor)")
 			pain_events += 1
-			if learn_enabled:
+			if learn_enabled and not drug.active():   # bajo el efecto de una droga no aprende (así no queda ninguna secuela)
 				# APRENDE: cuanto más a la vista estaba la pared (cercanía) mejor asocia el cue con el dolor.
 				var cue := maxf(prox_c, maxf(prox_l, prox_r))
 				wall_fear = minf(1.5, wall_fear + 0.12 + 0.2 * cue)
@@ -402,4 +406,5 @@ func die(why: String) -> void:
 	eaten = 0
 	age = 0.0
 	bump_t = 0.0
+	drug.hard_reset()
 	brain.reset()
