@@ -36,6 +36,24 @@ var drug_level := 0.0
 var _drug_sent_id := ""
 var _drug_sent_level := 0.0
 var _drug_dirty := false
+# LESIONES: Fly.gd fija lesion_ids; el servidor silencia esos grupos de neuronas. Solo se envía cuando cambia.
+var lesion_ids: Array = []
+var _lesion_sent: Array = []
+var _lesion_dirty := false
+# CEREBRO EN VIVO (lo que dibuja brain_view.gd): mapa del cerebro por casillas y medidas de la última respuesta.
+var grid_w := 0
+var grid_h := 0
+var dens := PackedByteArray()      # densidad de neuronas por casilla (0..35)
+var les_mask := PackedByteArray()  # parte de cada casilla que está lesionada (0..35)
+var px := PackedByteArray()        # actividad por casilla (0..35)
+var hz := 0.0                      # disparos por segundo de todo el cerebro
+var map_v := -1                    # versión del mapa que tenemos (si no coincide con la del servidor, se pide)
+var _srv_v := 0
+var sense := [0.0, 0.0, 0.0, 0.0, 0.0]   # lo que siente la mosca: olor izq/der, amenaza izq/der, hambre (lados del mundo, sin espejo)
+var out_turn := 0.0                # orden de giro del cerebro (-1 izquierda .. +1 derecha), ya sin espejo
+var out_fwd := 0.0                 # avance (0..1)
+var out_gf := 0.0                  # fibra gigante de escape (0..1)
+var out_kc := 0.0                  # fracción de células de Kenyon activas
 
 
 ## Fija la droga que debe aplicar el servidor (id "" o nivel 0 = ninguna).
@@ -44,10 +62,25 @@ func set_drug(id: String, level: float) -> void:
 	drug_level = level
 
 
+## Fija los grupos de neuronas silenciados (lista de ids; vacía = cerebro sano).
+func set_lesion(ids: Array) -> void:
+	lesion_ids = ids
+
+
+## ¿Hay alguna lesión de un solo lado? (entonces no se puede espejar el cerebro: la lesión cambiaría de lado)
+func _lateral_lesion() -> bool:
+	for id in lesion_ids:
+		if str(id).ends_with("_l") or str(id).ends_with("_r"):
+			return true
+	return false
+
+
 ## Intenta conectar con el servidor.
 func start(p: int = 9009) -> void:
 	port = p
 	_drug_dirty = true      # si el servidor se reinicia, vuelve a recibir el estado de la droga
+	_lesion_dirty = true    # ... y el de las lesiones
+	map_v = -1
 	sock = StreamPeerTCP.new()
 	sock.connect_to_host("127.0.0.1", port)
 	status = "conectando…"
@@ -86,6 +119,9 @@ func step(x: PackedFloat32Array) -> void:
 		if _mirror_t <= 0.0:
 			mirror = not mirror
 			_mirror_t = randf_range(6.0, 12.0)
+		if _lateral_lesion():
+			mirror = false
+		sense = [ol, orr, x[2], x[3], x[4] / 0.3]
 		var q := {"orn": [orr, ol] if mirror else [ol, orr], "loom": [x[3], x[2]] if mirror else [x[2], x[3]], "hunger": x[4] / 0.3, "reset": _reset}
 		_reset = false
 		if _drug_dirty or drug_id != _drug_sent_id or absf(drug_level - _drug_sent_level) >= 0.04 or (drug_level <= 0.001 and _drug_sent_level > 0.001):
@@ -97,6 +133,12 @@ func step(x: PackedFloat32Array) -> void:
 			_drug_sent_id = drug_id
 			_drug_sent_level = drug_level if drug_id != "" else 0.0
 			_drug_dirty = false
+		if _lesion_dirty or lesion_ids != _lesion_sent:
+			q["lesion"] = lesion_ids
+			_lesion_sent = lesion_ids.duplicate()
+			_lesion_dirty = false
+		if map_v != _srv_v:
+			q["map"] = true
 		sock.put_data((JSON.stringify(q) + "\n").to_utf8_buffer())
 	_read()
 	if _tgt.is_empty():
@@ -114,6 +156,10 @@ func step(x: PackedFloat32Array) -> void:
 		raw_turn = 0.0   # zona muerta: el ruido del cerebro no debe hacerla girar sin motivo
 	var turn := clampf(raw_turn + (x[76] - x[75]) * 0.8, -1.0, 1.0)
 	var fwd := clampf(0.05 + float(_tgt["fwd"]) * 1.7 + float(_tgt["gf"]) * 0.3, 0.0, 1.0)
+	out_turn = raw_turn
+	out_fwd = float(_tgt["fwd"])
+	out_gf = float(_tgt["gf"])
+	out_kc = float(_tgt["kc"])
 	# cerca de la fruta (olor fuerte) frena para poder encararla sin pasarse de largo ni orbitarla
 	var near := smoothstep(0.15, 0.45, maxf(conc_l, conc_r))
 	fwd *= lerpf(1.0, 0.5, near)
@@ -149,7 +195,26 @@ func _read() -> void:
 			_view.resize(v.size())
 			for i in v.size():
 				_view[i] = float(v[i])
+			hz = float(d.get("hz", 0.0))
+			_srv_v = int(d.get("lv", 0))
+			if d.has("px"):
+				px = _levels(str(d["px"]))
+			if d.has("grid"):
+				var g: Dictionary = d["grid"]
+				grid_w = int(g.get("w", 0))
+				grid_h = int(g.get("h", 0))
+				dens = _levels(str(g.get("dens", "")))
+				les_mask = _levels(str(g.get("les", "")))
+				map_v = _srv_v
 			break
+
+
+## Convierte el texto del mapa (una letra 0-9a-z por casilla) en niveles 0..35.
+func _levels(s: String) -> PackedByteArray:
+	var b := s.to_ascii_buffer()
+	for i in b.size():
+		b[i] = b[i] - 48 if b[i] < 58 else b[i] - 87
+	return b
 
 
 ## Al renacer: pide al servidor que apague la actividad.

@@ -9,6 +9,8 @@ Aquí están las explicaciones **a fondo** de cómo funciona Hollowfly por dentr
 | Cómo está organizado el juego y qué hace cada archivo | [`ARQUITECTURA.md`](ARQUITECTURA.md) |
 | Cómo funciona el cerebro de la mosca y cómo habla con el juego | [`CEREBRO.md`](CEREBRO.md) |
 | Cómo encender y ajustar el cerebro, con todos sus detalles | [`SERVIDOR_CEREBRO.md`](SERVIDOR_CEREBRO.md) |
+| Qué pasa si la mosca recibe un compuesto (alcohol, cafeína, sedante…) | [`DROGAS.md`](DROGAS.md) |
+| Cómo ver el cerebro en vivo y apagarle partes (lesiones) | [`CEREBRO_EN_VIVO.md`](CEREBRO_EN_VIVO.md) |
 | Cómo se crearon los personajes en Blender | [`PERSONAJES_BLENDER.md`](PERSONAJES_BLENDER.md) |
 | Cómo se consiguió que el juego vaya fluido (de 2 a 165 imágenes por segundo) | [`RENDIMIENTO.md`](RENDIMIENTO.md) |
 | Cómo se prueba que todo funciona y qué resultados dio | [`PRUEBAS.md`](PRUEBAS.md) |

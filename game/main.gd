@@ -51,6 +51,8 @@ var free_pitch := -0.3
 var logs: Array[String] = []
 var hud: Label
 var drug_panel: Control
+var lesion_panel: Control
+var brain_view: Control   # panel "cerebro en vivo" (tecla B)
 var nv: NeuroView   # panel de actividad neuronal (se reasigna al cambiar de cerebro)
 var logl: Label
 # speed_i = índice de velocidad del juego (x1, x3, x8);  fire_lights = luces de fuego que parpadean.
@@ -1079,16 +1081,24 @@ func _ui() -> void:
 	ml.position = Vector2(8, 8)
 	ml.add_theme_font_size_override("font_size", 10)
 	map_layer.add_child(ml)
+	brain_view = preload("res://brain_view.gd").new()
+	brain_view.build(fly)
+	brain_view.position = Vector2(404, 4)
+	cl.add_child(brain_view)
 	drug_panel = preload("res://drug_panel.gd").new()
 	drug_panel.build(fly)
 	cl.add_child(drug_panel)
-	var items := [["Cámara (C)", _cycle_mode], ["Siguiente (N)", next_target], ["Mosca (F)", _to_fly], ["Vel (V)", _cycle_speed], ["Hora (T)", func(): dn.next_preset()], ["Mapa (M)", _toggle_map], ["Química (P)", _toggle_drugs], ["Pant. (F11)", _toggle_fullscreen]]
+	lesion_panel = preload("res://lesion_panel.gd").new()
+	lesion_panel.build(fly)
+	cl.add_child(lesion_panel)
+	var items := [["Cámara (C)", _cycle_mode], ["Sig. (N)", next_target], ["Mosca (F)", _to_fly], ["Vel (V)", _cycle_speed], ["Hora (T)", func(): dn.next_preset()], ["Mapa (M)", _toggle_map], ["Quím. (P)", _toggle_drugs], ["Lesión (L)", _toggle_lesions], ["Cerebro (B)", _toggle_brain], ["Pant. (F11)", _toggle_fullscreen]]
 	for i in items.size():
 		var b := Button.new()
 		b.text = items[i][0]
-		b.position = Vector2(4 + i * 79, 330)
-		b.size = Vector2(77, 24)
-		b.add_theme_font_size_override("font_size", 10)
+		b.add_theme_font_size_override("font_size", 8)
+		b.clip_text = true          # 10 botones en 640 px: sin esto cada botón se ensancha hasta su texto y tapa al siguiente
+		b.position = Vector2(4 + i * 63.3, 330)
+		b.size = Vector2(62, 24)
 		b.pressed.connect(items[i][1])
 		cl.add_child(b)
 
@@ -1147,7 +1157,24 @@ func _restore_fullscreen() -> void:
 
 ## Abre / cierra el panel de drogas (tecla P).
 func _toggle_drugs() -> void:
+	lesion_panel.close()
 	drug_panel.visible = not drug_panel.visible
+
+
+## Abre / cierra el panel de lesiones (tecla L).
+func _toggle_lesions() -> void:
+	drug_panel.close()
+	if lesion_panel.visible:
+		lesion_panel.close()
+	else:
+		lesion_panel.open()
+
+
+## Muestra / oculta el panel "cerebro en vivo" (tecla B). Ocupa el sitio del minimapa y del panel pequeño de actividad.
+func _toggle_brain() -> void:
+	brain_view.visible = not brain_view.visible
+	nv.visible = not brain_view.visible
+	minimap.visible = not brain_view.visible
 
 
 ## Abre / cierra el mapa completo (tecla M).
@@ -1178,6 +1205,8 @@ func _input(e: InputEvent) -> void:
 			KEY_ESCAPE:
 				if drug_panel.visible:
 					drug_panel.close()
+				elif lesion_panel.visible:
+					lesion_panel.close()
 				elif DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
 					_toggle_fullscreen()
 			KEY_T: dn.next_preset()
@@ -1185,11 +1214,13 @@ func _input(e: InputEvent) -> void:
 			KEY_R: dn.rain_auto = false; dn.rain_on = not dn.rain_on
 			KEY_M: _toggle_map()
 			KEY_P: _toggle_drugs()
+			KEY_L: _toggle_lesions()
+			KEY_B: _toggle_brain()
 	elif e is InputEventMouseButton and e.pressed and mode == 2 and not map_layer.visible:
 		if e.button_index == MOUSE_BUTTON_WHEEL_UP: free_speed = minf(free_speed * 1.2, 400.0)
 		elif e.button_index == MOUSE_BUTTON_WHEEL_DOWN: free_speed = maxf(free_speed / 1.2, 3.0)
 	elif e is InputEventMouseMotion and (e.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0 and not map_layer.visible \
-			and not (drug_panel.visible and drug_panel.get_global_rect().has_point(e.position)):
+			and not (drug_panel.visible and drug_panel.get_global_rect().has_point(e.position)) and not lesion_panel.visible:
 		if mode == 2:
 			free_yaw -= e.relative.x * 0.005
 			free_pitch = clampf(free_pitch - e.relative.y * 0.005, -1.4, 1.4)
@@ -1261,4 +1292,4 @@ func _process(dt: float) -> void:
 	hud.text = "%s · %s\nMosca: gen %d · energía %d · frutas %d · %s\nCerebro: %s\n%s %s%s%s" % [
 		MODES[mode], who, fly.gen, int(fly.energy), fly.eaten, biome_name(fly.global_position),
 		fly.real_brain.status,
-		dn.clock(), dn.preset_name(), " (auto)" if dn.auto else "", ("  · cámara libre %d m/s" % int(free_speed)) if mode == 2 else ""] + ("  · %d FPS" % Engine.get_frames_per_second() if show_fps else "") + ("\nCompuesto: " + fly.drug.status_text() if fly.drug.active() else "")
+		dn.clock(), dn.preset_name(), " (auto)" if dn.auto else "", ("  · cámara libre %d m/s" % int(free_speed)) if mode == 2 else ""] + ("  · %d FPS" % Engine.get_frames_per_second() if show_fps else "") + ("\nCompuesto: " + fly.drug.status_text() if fly.drug.active() else "") + ("\nLesión: " + fly.lesion.status_text() if fly.lesion.active() else "")
